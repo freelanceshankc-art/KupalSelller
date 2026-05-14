@@ -92,8 +92,13 @@
   </div>
 
   <!-- Supabase CDN -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="js/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+  <script>
+    // Wait for Supabase to load then initialize
+    const SUPABASE_URL = 'https://soycqmjnjqkmbinzfrnf.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNveWNxbWpuanFrbWJpbnpmcm5mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MjkzNzgsImV4cCI6MjA5NDMwNTM3OH0.9dEaN4ZOMZfQtB-547UzlNmfOkzsfuT7Xu9oXOMGTTs';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
   <script src="js/admin.js"></script>
 </body>
 </html>
