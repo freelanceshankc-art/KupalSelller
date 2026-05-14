@@ -174,44 +174,6 @@
       </div>
     </div>
 
-    <!-- Trusted Sellers Management -->
-    <div class="panel">
-      <h2>✅ Manage Trusted Sellers</h2>
-      <p class="panel-description">Add or remove verified sellers that appear on the main page.</p>
-      
-      <div class="add-seller-form">
-        <input type="text" id="new-seller-username" placeholder="@username" />
-        <select id="new-seller-platform">
-          <option value="Telegram">Telegram</option>
-          <option value="Discord">Discord</option>
-          <option value="Facebook">Facebook</option>
-          <option value="WhatsApp">WhatsApp</option>
-          <option value="Twitter/X">Twitter/X</option>
-          <option value="Instagram">Instagram</option>
-          <option value="Others">Others</option>
-        </select>
-        <input type="url" id="new-seller-link" placeholder="Profile link (e.g. https://t.me/username)" />
-        <input type="url" id="new-seller-avatar" placeholder="Avatar image URL (optional)" />
-        <button id="add-seller-btn" class="add-btn">Add Seller</button>
-      </div>
-
-      <div class="table-wrapper">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Username</th>
-              <th>Platform</th>
-              <th>Link</th>
-              <th>Added</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="trusted-sellers-table-body">
-            <tr><td colspan="5" class="loading">Loading data</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 
   <script type="module">
