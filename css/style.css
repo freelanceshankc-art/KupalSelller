@@ -1,0 +1,256 @@
+/* ============================================
+   DARK THEME STYLES
+   ============================================ */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f0f0f;
+  color: #e0e0e0;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+header h1 {
+  font-size: 2rem;
+  color: #ffffff;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #ff4d4d, #ff8c00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+/* Form Styles */
+.report-form {
+  background-color: #1a1a1a;
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #2a2a2a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #ccc;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #252525;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.15);
+}
+
+.form-group input::placeholder {
+  color: #666;
+}
+
+.form-group select option {
+  background-color: #252525;
+  color: #e0e0e0;
+}
+
+/* Submit Button */
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ff4d4d, #ff8c00);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Result Section */
+.result-section {
+  margin-top: 30px;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #2a2a2a;
+  animation: fadeIn 0.3s ease;
+}
+
+.result-section.match {
+  background-color: #1a1a2e;
+  border-color: #e94560;
+}
+
+.result-section.success {
+  background-color: #1a2e1a;
+  border-color: #4caf50;
+}
+
+.result-section.error {
+  background-color: #2e1a1a;
+  border-color: #f44336;
+}
+
+.match-found h3 {
+  color: #e94560;
+  margin-bottom: 10px;
+}
+
+.no-match h3 {
+  color: #4caf50;
+  margin-bottom: 10px;
+}
+
+.warning-text {
+  color: #e94560;
+  font-weight: 600;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: rgba(233, 69, 96, 0.1);
+  border-radius: 6px;
+}
+
+.report-summary {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: rgba(76, 175, 80, 0.1);
+  border-radius: 6px;
+}
+
+.report-summary p {
+  margin-bottom: 5px;
+}
+
+/* Match Table */
+.match-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 0.85rem;
+}
+
+.match-table th,
+.match-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.match-table th {
+  background-color: #252535;
+  color: #ff8c00;
+  font-weight: 600;
+}
+
+.match-table td {
+  color: #ccc;
+}
+
+.match-table tr:hover td {
+  background-color: #252535;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #2a2a2a;
+}
+
+.admin-link {
+  color: #888;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.3s ease;
+}
+
+.admin-link:hover {
+  color: #ff6b35;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .report-form {
+    padding: 20px;
+  }
+
+  .match-table {
+    font-size: 0.75rem;
+  }
+
+  .match-table th,
+  .match-table td {
+    padding: 8px 6px;
+  }
+}

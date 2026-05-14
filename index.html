@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Problematic Subscription Seller</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Report a Problematic Seller</h1>
+      <p class="subtitle">Submit your discounted subscription details to report a problematic seller</p>
+    </header>
+
+    <main>
+      <form id="report-form" class="report-form">
+        <div class="form-group">
+          <label for="email">Subscription Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="Enter subscription email"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Subscription Password</label>
+          <input 
+            type="text" 
+            id="password" 
+            name="password" 
+            placeholder="Enter subscription password"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="supplier-username">Seller Username</label>
+          <input 
+            type="text" 
+            id="supplier-username" 
+            name="supplier-username" 
+            placeholder="Enter the seller's username"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="platform">Platform</label>
+          <select id="platform" name="platform" required>
+            <option value="" disabled selected>Select platform</option>
+            <option value="Telegram">Telegram</option>
+            <option value="Discord">Discord</option>
+            <option value="Facebook">Facebook</option>
+            <option value="WhatsApp">WhatsApp</option>
+            <option value="Twitter/X">Twitter/X</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+
+        <button type="submit" id="submit-btn" class="submit-btn">Submit Report</button>
+      </form>
+
+      <div id="result-section" class="result-section" style="display: none;">
+        <div id="result-content"></div>
+      </div>
+    </main>
+
+    <footer>
+      <p><a href="admin.html" class="admin-link">Admin Panel</a></p>
+    </footer>
+  </div>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

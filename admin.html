@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Seller Reports</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Admin Panel</h1>
+      <div>
+        <button id="refresh-btn" class="refresh-btn">Refresh Data</button>
+        <a href="index.html" class="back-link">Back to Form</a>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <h3>Total Reports</h3>
+        <div class="stat-value" id="stat-total-reports">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Unique Sellers</h3>
+        <div class="stat-value" id="stat-unique-sellers">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Repeated Sellers</h3>
+        <div class="stat-value" id="stat-repeated-sellers">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Unique Emails</h3>
+        <div class="stat-value" id="stat-unique-emails">0</div>
+      </div>
+    </div>
+
+    <!-- Repeated Sellers Panel -->
+    <div class="panel">
+      <h2>Sellers Ranked by Reports</h2>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Seller Username</th>
+              <th>Platform</th>
+              <th>Reports</th>
+              <th>Unique Victims</th>
+              <th>Last Reported</th>
+            </tr>
+          </thead>
+          <tbody id="sellers-table-body">
+            <tr><td colspan="5" class="loading">Loading data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- All Reports Panel -->
+    <div class="panel">
+      <h2>All Reports</h2>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Seller</th>
+              <th>Platform</th>
+              <th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody id="reports-table-body">
+            <tr><td colspan="6" class="loading">Loading data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
