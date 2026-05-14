@@ -135,6 +135,42 @@
         </table>
       </div>
     </div>
+
+    <!-- Trusted Sellers Management -->
+    <div class="panel">
+      <h2>✅ Manage Trusted Sellers</h2>
+      <p class="panel-description">Add or remove verified sellers that appear on the main page.</p>
+      
+      <div class="add-seller-form">
+        <input type="text" id="new-seller-username" placeholder="@username" />
+        <select id="new-seller-platform">
+          <option value="Telegram">Telegram</option>
+          <option value="Discord">Discord</option>
+          <option value="Facebook">Facebook</option>
+          <option value="WhatsApp">WhatsApp</option>
+          <option value="Twitter/X">Twitter/X</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Others">Others</option>
+        </select>
+        <button id="add-seller-btn" class="add-btn">Add Seller</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Platform</th>
+              <th>Added</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="trusted-sellers-table-body">
+            <tr><td colspan="4" class="loading">Loading data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script type="module">
@@ -215,6 +251,7 @@
         displayFlaggedEmails(reports);
         displayRepeatedSellers(reports);
         displayAllReports(reports);
+        loadTrustedSellers();
       } catch (error) {
         console.error('Error loading dashboard:', error);
         document.getElementById('flagged-table-body').innerHTML = `
@@ -401,6 +438,97 @@
       const div = document.createElement('div');
       div.appendChild(document.createTextNode(str));
       return div.innerHTML;
+    }
+
+    // ============================================
+    // TRUSTED SELLERS MANAGEMENT
+    // ============================================
+
+    document.getElementById('add-seller-btn').addEventListener('click', addTrustedSeller);
+    document.getElementById('new-seller-username').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTrustedSeller();
+    });
+
+    async function addTrustedSeller() {
+      const username = document.getElementById('new-seller-username').value.trim();
+      const platform = document.getElementById('new-seller-platform').value;
+
+      if (!username) {
+        alert('Please enter a username');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('trusted_sellers')
+          .insert([{ username, platform }])
+          .select();
+
+        if (error) throw error;
+
+        document.getElementById('new-seller-username').value = '';
+        loadTrustedSellers();
+      } catch (error) {
+        alert('Error adding seller: ' + error.message);
+      }
+    }
+
+    async function removeTrustedSeller(id) {
+      if (!confirm('Remove this trusted seller?')) return;
+
+      try {
+        const { error } = await supabase
+          .from('trusted_sellers')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+        loadTrustedSellers();
+      } catch (error) {
+        alert('Error removing seller: ' + error.message);
+      }
+    }
+
+    // Make removeTrustedSeller available globally for onclick
+    window.removeTrustedSeller = removeTrustedSeller;
+
+    async function loadTrustedSellers() {
+      const tbody = document.getElementById('trusted-sellers-table-body');
+      tbody.innerHTML = '<tr><td colspan="4" class="loading">Loading...</td></tr>';
+
+      try {
+        const { data: sellers, error } = await supabase
+          .from('trusted_sellers')
+          .select('*')
+          .order('added_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!sellers || sellers.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No trusted sellers added yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = sellers.map(seller => {
+          const platformClass = getPlatformClass(seller.platform);
+          const date = new Date(seller.added_at).toLocaleDateString();
+          return `
+            <tr>
+              <td><strong>${escapeHTML(seller.username)}</strong></td>
+              <td><span class="platform-badge ${platformClass}">${escapeHTML(seller.platform)}</span></td>
+              <td>${date}</td>
+              <td><button class="remove-btn" onclick="removeTrustedSeller('${seller.id}')">Remove</button></td>
+            </tr>
+          `;
+        }).join('');
+      } catch (error) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Error: ${escapeHTML(error.message)}</td></tr>`;
+      }
+    }
+
+    // Load trusted sellers on dashboard load
+    if (sessionStorage.getItem('admin_auth') === 'true') {
+      loadTrustedSellers();
     }
   </script>
 </body>

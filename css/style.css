@@ -377,6 +377,13 @@ header h1 span {
   border-radius: 50%;
 }
 
+.loading-text {
+  color: #71717a;
+  text-align: center;
+  font-size: 0.8rem;
+  grid-column: 1 / -1;
+}
+
 /* Footer */
 footer {
   text-align: center;

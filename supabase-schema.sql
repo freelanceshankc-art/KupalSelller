@@ -25,3 +25,23 @@ CREATE INDEX idx_reports_supplier ON reports (supplier_username, platform);
 -- ALTER TABLE reports ADD COLUMN subscription_type TEXT;
 -- ALTER TABLE reports ADD COLUMN purchase_date DATE;
 -- ALTER TABLE reports ADD COLUMN issue_date DATE;
+
+-- ============================================
+-- TRUSTED SELLERS TABLE
+-- ============================================
+CREATE TABLE trusted_sellers (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  username TEXT NOT NULL,
+  platform TEXT NOT NULL,
+  added_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- IF YOU ALREADY HAVE THE reports TABLE, just run this to add trusted_sellers:
+-- ============================================
+-- CREATE TABLE trusted_sellers (
+--   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+--   username TEXT NOT NULL,
+--   platform TEXT NOT NULL,
+--   added_at TIMESTAMPTZ DEFAULT NOW()
+-- );

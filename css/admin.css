@@ -439,3 +439,71 @@ header h1 {
   color: #555;
   font-size: 0.8rem;
 }
+
+
+
+/* Add Seller Form */
+.add-seller-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.add-seller-form input,
+.add-seller-form select {
+  padding: 10px 14px;
+  background-color: #252525;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 0.85rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.add-seller-form input {
+  flex: 1;
+  min-width: 150px;
+}
+
+.add-seller-form select {
+  min-width: 120px;
+}
+
+.add-seller-form input:focus,
+.add-seller-form select:focus {
+  outline: none;
+  border-color: #22c55e;
+}
+
+.add-btn {
+  padding: 10px 20px;
+  background-color: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+  background-color: #16a34a;
+}
+
+.remove-btn {
+  padding: 5px 12px;
+  background-color: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}

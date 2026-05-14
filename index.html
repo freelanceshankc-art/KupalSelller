@@ -106,39 +106,8 @@
     <section class="trusted-section">
       <h2>Trusted Sellers</h2>
       <p class="trusted-subtitle">These sellers have been verified and have zero reports</p>
-      <div class="trusted-grid">
-        <div class="seller-card">
-          <div class="seller-avatar">S</div>
-          <div class="seller-info">
-            <div class="seller-name">@SampleSeller1</div>
-            <div class="seller-platform">Telegram</div>
-          </div>
-          <span class="verified-badge">Verified</span>
-        </div>
-        <div class="seller-card">
-          <div class="seller-avatar">M</div>
-          <div class="seller-info">
-            <div class="seller-name">@MikeSubs</div>
-            <div class="seller-platform">Discord</div>
-          </div>
-          <span class="verified-badge">Verified</span>
-        </div>
-        <div class="seller-card">
-          <div class="seller-avatar">J</div>
-          <div class="seller-info">
-            <div class="seller-name">@JayDeals</div>
-            <div class="seller-platform">Telegram</div>
-          </div>
-          <span class="verified-badge">Verified</span>
-        </div>
-        <div class="seller-card">
-          <div class="seller-avatar">R</div>
-          <div class="seller-info">
-            <div class="seller-name">@ReliableSubs</div>
-            <div class="seller-platform">Facebook</div>
-          </div>
-          <span class="verified-badge">Verified</span>
-        </div>
+      <div class="trusted-grid" id="trusted-grid">
+        <p class="loading-text">Loading trusted sellers...</p>
       </div>
     </section>
 
@@ -285,6 +254,43 @@
       div.appendChild(document.createTextNode(str));
       return div.innerHTML;
     }
+
+    // Load trusted sellers from Supabase
+    async function loadTrustedSellers() {
+      const grid = document.getElementById('trusted-grid');
+      try {
+        const { data: sellers, error } = await supabase
+          .from('trusted_sellers')
+          .select('*')
+          .order('added_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!sellers || sellers.length === 0) {
+          grid.innerHTML = '<p style="color:#71717a; text-align:center; font-size:0.8rem;">No trusted sellers yet</p>';
+          return;
+        }
+
+        grid.innerHTML = sellers.map(seller => {
+          const initial = seller.username.replace('@', '').charAt(0).toUpperCase();
+          return `
+            <div class="seller-card">
+              <div class="seller-avatar">${escapeHTML(initial)}</div>
+              <div class="seller-info">
+                <div class="seller-name">${escapeHTML(seller.username)}</div>
+                <div class="seller-platform">${escapeHTML(seller.platform)}</div>
+              </div>
+              <span class="verified-badge">Verified</span>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Error loading trusted sellers:', error);
+        grid.innerHTML = '<p style="color:#71717a; text-align:center; font-size:0.8rem;">Could not load trusted sellers</p>';
+      }
+    }
+
+    loadTrustedSellers();
   </script>
 </body>
 </html>
