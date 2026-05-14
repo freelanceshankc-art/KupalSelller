@@ -25,12 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.textContent = 'Submitting...';
 
     try {
-      // Check if this email+password combo already exists in the system
+      // Check if this email already exists in the system
       const { data: existingReports, error: matchError } = await supabase
         .from('reports')
         .select('*')
-        .eq('email', email)
-        .eq('password', password);
+        .eq('email', email);
 
       if (matchError) throw matchError;
 
