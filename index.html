@@ -38,6 +38,36 @@
         </div>
 
         <div class="form-group">
+          <label for="subscription-type">Subscription Type</label>
+          <select id="subscription-type" name="subscription-type" required>
+            <option value="" disabled selected>Select subscription</option>
+            <option value="ChatGPT">ChatGPT</option>
+            <option value="Grok">Grok</option>
+            <option value="CapCut">CapCut</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="purchase-date">When did you purchase?</label>
+          <input 
+            type="date" 
+            id="purchase-date" 
+            name="purchase-date" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="issue-date">When did the issue/subscription expire?</label>
+          <input 
+            type="date" 
+            id="issue-date" 
+            name="issue-date" 
+            required
+          >
+        </div>
+
+        <div class="form-group">
           <label for="supplier-username">Seller Username</label>
           <input 
             type="text" 
@@ -71,7 +101,7 @@
     </main>
 
     <footer>
-      <p class="footer-text">Report problematic subscription sellers v2</p>
+      <p class="footer-text">Report problematic subscription sellers</p>
     </footer>
   </div>
 
@@ -93,10 +123,13 @@
 
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
+      const subscriptionType = document.getElementById('subscription-type').value;
+      const purchaseDate = document.getElementById('purchase-date').value;
+      const issueDate = document.getElementById('issue-date').value;
       const supplierUsername = document.getElementById('supplier-username').value.trim();
       const platform = document.getElementById('platform').value;
 
-      if (!email || !password || !supplierUsername || !platform) {
+      if (!email || !password || !subscriptionType || !purchaseDate || !issueDate || !supplierUsername || !platform) {
         showResult('error', 'Please fill in all fields.');
         return;
       }
@@ -120,6 +153,9 @@
             {
               email: email,
               password: password,
+              subscription_type: subscriptionType,
+              purchase_date: purchaseDate,
+              issue_date: issueDate,
               supplier_username: supplierUsername,
               platform: platform
             }
@@ -138,6 +174,7 @@
                 <thead>
                   <tr>
                     <th>Email</th>
+                    <th>Type</th>
                     <th>Supplier</th>
                     <th>Platform</th>
                     <th>Reported On</th>
@@ -151,6 +188,7 @@
             matchHTML += `
               <tr>
                 <td>${escapeHTML(report.email)}</td>
+                <td>${escapeHTML(report.subscription_type || 'N/A')}</td>
                 <td>${escapeHTML(report.supplier_username)}</td>
                 <td>${escapeHTML(report.platform)}</td>
                 <td>${date}</td>
@@ -173,6 +211,9 @@
               <p>Your report has been recorded. This is the first report for this subscription.</p>
               <div class="report-summary">
                 <p><strong>Email:</strong> ${escapeHTML(email)}</p>
+                <p><strong>Subscription:</strong> ${escapeHTML(subscriptionType)}</p>
+                <p><strong>Purchased:</strong> ${purchaseDate}</p>
+                <p><strong>Issue Date:</strong> ${issueDate}</p>
                 <p><strong>Supplier:</strong> ${escapeHTML(supplierUsername)}</p>
                 <p><strong>Platform:</strong> ${escapeHTML(platform)}</p>
               </div>
