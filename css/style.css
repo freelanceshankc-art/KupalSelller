@@ -25,13 +25,22 @@ body {
 }
 
 /* Layout */
-.layout {
-  max-width: 540px;
+.layout-two-col {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  max-width: 900px;
   margin: 0 auto;
+  align-items: start;
 }
 
 .form-column {
-  width: 100%;
+  max-width: 540px;
+}
+
+.ranking-sidebar {
+  position: sticky;
+  top: 30px;
 }
 
 /* Header */
@@ -384,6 +393,105 @@ header h1 span {
   grid-column: 1 / -1;
 }
 
+/* ============================================
+   RANKING SIDEBAR
+   ============================================ */
+
+.ranking-panel {
+  background-color: #111118;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.ranking-panel h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fafafa;
+  margin-bottom: 4px;
+}
+
+.ranking-subtitle {
+  color: #71717a;
+  font-size: 0.7rem;
+  margin-bottom: 16px;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background-color: #16161f;
+  border: 1px solid #2a2a3a;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.rank-item.high-risk {
+  border-color: rgba(239, 68, 68, 0.4);
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+.rank-item.medium-risk {
+  border-color: rgba(245, 158, 11, 0.3);
+  background-color: rgba(245, 158, 11, 0.03);
+}
+
+.rank-item.low-risk {
+  border-color: #2a2a3a;
+}
+
+.rank-number {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 50%;
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.rank-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.rank-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #fafafa;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rank-platform {
+  font-size: 0.6rem;
+  color: #71717a;
+}
+
+.rank-count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ef4444;
+  padding: 2px 8px;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  white-space: nowrap;
+}
+
 /* Footer */
 footer {
   text-align: center;
@@ -412,8 +520,14 @@ footer {
 
 /* Responsive */
 @media (max-width: 860px) {
-  .layout {
-    max-width: 100%;
+  .layout-two-col {
+    grid-template-columns: 1fr;
+    max-width: 540px;
+  }
+
+  .ranking-sidebar {
+    position: static;
+    order: -1;
   }
 }
 
@@ -484,112 +598,3 @@ footer {
 }
 
 
-
-/* ============================================
-   REPORTED SELLERS WARNING SECTION
-   ============================================ */
-
-.reported-sellers-section {
-  max-width: 540px;
-  margin: 0 auto 32px;
-  background-color: rgba(239, 68, 68, 0.04);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  border-radius: 16px;
-  padding: 24px;
-}
-
-.reported-sellers-section h2 {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #fafafa;
-  margin-bottom: 4px;
-  text-align: center;
-}
-
-.reported-subtitle {
-  color: #71717a;
-  font-size: 0.75rem;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.reported-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.reported-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #16161f;
-  border: 1px solid #2a2a3a;
-  border-radius: 10px;
-  padding: 10px 12px;
-  transition: all 0.2s ease;
-}
-
-.reported-card.high-risk {
-  border-color: rgba(239, 68, 68, 0.4);
-  background-color: rgba(239, 68, 68, 0.05);
-}
-
-.reported-card.medium-risk {
-  border-color: rgba(245, 158, 11, 0.3);
-  background-color: rgba(245, 158, 11, 0.03);
-}
-
-.reported-card.low-risk {
-  border-color: rgba(245, 158, 11, 0.2);
-}
-
-.reported-avatar {
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.reported-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.reported-name {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #fafafa;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.reported-platform {
-  font-size: 0.6rem;
-  color: #71717a;
-}
-
-.reported-count {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #ef4444;
-  white-space: nowrap;
-  padding: 2px 8px;
-  background-color: rgba(239, 68, 68, 0.1);
-  border-radius: 12px;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-@media (max-width: 540px) {
-  .reported-list {
-    grid-template-columns: 1fr;
-  }
-}

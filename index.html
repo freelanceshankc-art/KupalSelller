@@ -13,14 +13,19 @@
       <p class="subtitle">Submit your discounted subscription details to report a problematic seller</p>
     </header>
 
-    <!-- Reported Sellers Warning -->
-    <section class="reported-sellers-section" id="reported-sellers-section" style="display:none;">
-      <h2>Reported Sellers</h2>
-      <p class="reported-subtitle">These sellers have been reported for reselling subscriptions</p>
-      <div class="reported-list" id="reported-list"></div>
-    </section>
+    <div class="layout-two-col">
+      <!-- Left: Reported Sellers Ranking -->
+      <aside class="ranking-sidebar" id="ranking-sidebar">
+        <div class="ranking-panel">
+          <h2>Reported Sellers</h2>
+          <p class="ranking-subtitle">Ranked by number of reports</p>
+          <div class="ranking-list" id="ranking-list">
+            <p class="loading-text">Loading...</p>
+          </div>
+        </div>
+      </aside>
 
-    <div class="layout">
+      <!-- Right: Form -->
       <main class="form-column">
         <form id="report-form" class="report-form">
         <div class="form-group">
@@ -305,10 +310,9 @@
       }
     }
 
-    // Load reported sellers (wall of shame)
+    // Load reported sellers ranking
     async function loadReportedSellers() {
-      const section = document.getElementById('reported-sellers-section');
-      const list = document.getElementById('reported-list');
+      const list = document.getElementById('ranking-list');
 
       try {
         const { data: reports, error } = await supabase
@@ -317,7 +321,10 @@
 
         if (error) throw error;
 
-        if (!reports || reports.length === 0) return;
+        if (!reports || reports.length === 0) {
+          list.innerHTML = '<p style="color:#71717a; text-align:center; font-size:0.75rem;">No reports yet</p>';
+          return;
+        }
 
         // Count reports per seller
         const sellerCounts = {};
@@ -329,31 +336,33 @@
           sellerCounts[key].count++;
         });
 
-        // Only show sellers with 2+ reports, sorted by count
-        const flaggedSellers = Object.values(sellerCounts)
-          .filter(s => s.count >= 2)
+        // Sort by count descending, show top 10
+        const ranked = Object.values(sellerCounts)
           .sort((a, b) => b.count - a.count)
-          .slice(0, 6);
+          .slice(0, 10);
 
-        if (flaggedSellers.length === 0) return;
+        if (ranked.length === 0) {
+          list.innerHTML = '<p style="color:#71717a; text-align:center; font-size:0.75rem;">No reports yet</p>';
+          return;
+        }
 
-        section.style.display = 'block';
-        list.innerHTML = flaggedSellers.map(seller => {
-          const initial = seller.username.replace('@', '').charAt(0).toUpperCase();
+        list.innerHTML = ranked.map((seller, index) => {
           const riskClass = seller.count >= 5 ? 'high-risk' : seller.count >= 3 ? 'medium-risk' : 'low-risk';
+          const rankNum = index + 1;
           return `
-            <div class="reported-card ${riskClass}">
-              <div class="reported-avatar">${escapeHTML(initial)}</div>
-              <div class="reported-info">
-                <div class="reported-name">${escapeHTML(seller.username)}</div>
-                <div class="reported-platform">${escapeHTML(seller.platform)}</div>
+            <div class="rank-item ${riskClass}">
+              <span class="rank-number">${rankNum}</span>
+              <div class="rank-info">
+                <div class="rank-name">${escapeHTML(seller.username)}</div>
+                <div class="rank-platform">${escapeHTML(seller.platform)}</div>
               </div>
-              <div class="reported-count">${seller.count} reports</div>
+              <span class="rank-count">${seller.count}</span>
             </div>
           `;
         }).join('');
       } catch (error) {
         console.error('Error loading reported sellers:', error);
+        list.innerHTML = '<p style="color:#71717a; text-align:center; font-size:0.75rem;">Could not load data</p>';
       }
     }
 
