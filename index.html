@@ -7,6 +7,21 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="nav-brand">KupalSeller</div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="nav-links" id="nav-links">
+      <a href="#ranking-section" class="nav-link">Top 10 Reported</a>
+      <a href="#report-section" class="nav-link">Report</a>
+      <a href="#trusted-section" class="nav-link nav-link-green">Trusted Sellers</a>
+    </div>
+  </nav>
+
   <div class="page-wrapper">
     <header>
       <h1>Report a <span>Problematic Seller</span></h1>
@@ -15,7 +30,7 @@
 
     <div class="layout-three-col">
       <!-- Left: Reported Sellers Ranking -->
-      <aside class="ranking-sidebar" id="ranking-sidebar">
+      <aside class="ranking-sidebar" id="ranking-section">
         <div class="ranking-panel">
           <h2>Top 10 Reported</h2>
           <p class="ranking-subtitle">Sellers with most reports</p>
@@ -26,7 +41,7 @@
       </aside>
 
       <!-- Center: Form -->
-      <main class="form-column">
+      <main class="form-column" id="report-section">
         <form id="report-form" class="report-form">
         <div class="form-group">
           <label for="email">Subscription Email</label>
@@ -114,7 +129,7 @@
       </main>
 
       <!-- Right: Trusted Sellers -->
-      <aside class="trusted-sidebar">
+      <aside class="trusted-sidebar" id="trusted-section">
         <div class="trusted-panel">
           <h2>Trusted Sellers</h2>
           <p class="trusted-subtitle">Verified with zero reports</p>
@@ -370,6 +385,23 @@
 
     loadReportedSellers();
     loadTrustedSellers();
+
+    // Navigation toggle for mobile
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      navToggle.classList.toggle('active');
+    });
+
+    // Close nav when link clicked
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        navToggle.classList.remove('active');
+      });
+    });
   </script>
 </body>
 </html>
