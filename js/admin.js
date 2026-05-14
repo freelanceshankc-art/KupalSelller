@@ -2,8 +2,41 @@
 // ADMIN PANEL LOGIC
 // ============================================
 
+// Change this to your own secret password
+const ADMIN_PASSWORD = 'kupal2024';
+
 document.addEventListener('DOMContentLoaded', () => {
-  loadDashboard();
+  const loginGate = document.getElementById('login-gate');
+  const adminContent = document.getElementById('admin-content');
+  const loginBtn = document.getElementById('login-btn');
+  const passwordInput = document.getElementById('admin-password');
+  const loginError = document.getElementById('login-error');
+
+  // Check if already authenticated this session
+  if (sessionStorage.getItem('admin_auth') === 'true') {
+    loginGate.style.display = 'none';
+    adminContent.style.display = 'block';
+    loadDashboard();
+  }
+
+  loginBtn.addEventListener('click', handleLogin);
+  passwordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleLogin();
+  });
+
+  function handleLogin() {
+    const entered = passwordInput.value;
+    if (entered === ADMIN_PASSWORD) {
+      sessionStorage.setItem('admin_auth', 'true');
+      loginGate.style.display = 'none';
+      adminContent.style.display = 'block';
+      loginError.style.display = 'none';
+      loadDashboard();
+    } else {
+      loginError.style.display = 'block';
+      passwordInput.value = '';
+    }
+  }
 
   document.getElementById('refresh-btn').addEventListener('click', loadDashboard);
 });
