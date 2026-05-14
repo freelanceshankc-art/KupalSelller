@@ -76,12 +76,23 @@
   </div>
 
   <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script>
-    // Wait for Supabase to load then initialize
     const SUPABASE_URL = 'https://soycqmjnjqkmbinzfrnf.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNveWNxbWpuanFrbWJpbnpmcm5mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MjkzNzgsImV4cCI6MjA5NDMwNTM3OH0.9dEaN4ZOMZfQtB-547UzlNmfOkzsfuT7Xu9oXOMGTTs';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Try multiple ways to initialize - covers different CDN versions
+    let supabase;
+    if (window.supabase && window.supabase.createClient) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else if (window.supabase && window.supabase.default && window.supabase.default.createClient) {
+      supabase = window.supabase.default.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else if (window.Supabase) {
+      supabase = window.Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else {
+      console.error('Supabase library not found. window.supabase =', window.supabase);
+      alert('Failed to load Supabase library. Check console for details.');
+    }
   </script>
   <script src="js/app.js"></script>
 </body>

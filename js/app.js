@@ -25,6 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.textContent = 'Submitting...';
 
     try {
+      if (!supabase || !supabase.from) {
+        throw new Error('Supabase not initialized. Please refresh the page.');
+      }
+
       // Check if this email already exists in the system
       const { data: existingReports, error: matchError } = await supabase
         .from('reports')
