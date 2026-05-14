@@ -13,6 +13,13 @@
       <p class="subtitle">Submit your discounted subscription details to report a problematic seller</p>
     </header>
 
+    <!-- Reported Sellers Warning -->
+    <section class="reported-sellers-section" id="reported-sellers-section" style="display:none;">
+      <h2>Reported Sellers</h2>
+      <p class="reported-subtitle">These sellers have been reported for reselling subscriptions</p>
+      <div class="reported-list" id="reported-list"></div>
+    </section>
+
     <div class="layout">
       <main class="form-column">
         <form id="report-form" class="report-form">
@@ -298,6 +305,59 @@
       }
     }
 
+    // Load reported sellers (wall of shame)
+    async function loadReportedSellers() {
+      const section = document.getElementById('reported-sellers-section');
+      const list = document.getElementById('reported-list');
+
+      try {
+        const { data: reports, error } = await supabase
+          .from('reports')
+          .select('supplier_username, platform');
+
+        if (error) throw error;
+
+        if (!reports || reports.length === 0) return;
+
+        // Count reports per seller
+        const sellerCounts = {};
+        reports.forEach(r => {
+          const key = `${r.supplier_username}|${r.platform}`;
+          if (!sellerCounts[key]) {
+            sellerCounts[key] = { username: r.supplier_username, platform: r.platform, count: 0 };
+          }
+          sellerCounts[key].count++;
+        });
+
+        // Only show sellers with 2+ reports, sorted by count
+        const flaggedSellers = Object.values(sellerCounts)
+          .filter(s => s.count >= 2)
+          .sort((a, b) => b.count - a.count)
+          .slice(0, 6);
+
+        if (flaggedSellers.length === 0) return;
+
+        section.style.display = 'block';
+        list.innerHTML = flaggedSellers.map(seller => {
+          const initial = seller.username.replace('@', '').charAt(0).toUpperCase();
+          const riskClass = seller.count >= 5 ? 'high-risk' : seller.count >= 3 ? 'medium-risk' : 'low-risk';
+          return `
+            <div class="reported-card ${riskClass}">
+              <div class="reported-avatar">${escapeHTML(initial)}</div>
+              <div class="reported-info">
+                <div class="reported-name">${escapeHTML(seller.username)}</div>
+                <div class="reported-platform">${escapeHTML(seller.platform)}</div>
+              </div>
+              <div class="reported-count">${seller.count} reports</div>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Error loading reported sellers:', error);
+      }
+    }
+
+    loadReportedSellers();
     loadTrustedSellers();
   </script>
 </body>
