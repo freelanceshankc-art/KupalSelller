@@ -25,11 +25,11 @@ body {
 }
 
 /* Layout */
-.layout-two-col {
+.layout-three-col {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 32px;
-  max-width: 900px;
+  grid-template-columns: 250px 1fr 250px;
+  gap: 28px;
+  max-width: 1100px;
   margin: 0 auto;
   align-items: start;
 }
@@ -39,6 +39,11 @@ body {
 }
 
 .ranking-sidebar {
+  position: sticky;
+  top: 30px;
+}
+
+.trusted-sidebar {
   position: sticky;
   top: 30px;
 }
@@ -281,76 +286,73 @@ header h1 span {
 }
 
 /* ============================================
-   TRUSTED SELLERS BELOW FORM
+   TRUSTED SELLERS RIGHT SIDEBAR
    ============================================ */
 
-.trusted-section {
-  max-width: 540px;
-  margin: 48px auto 0;
+.trusted-panel {
   background-color: #111118;
-  border: 1px solid #1e1e2e;
+  border: 1px solid rgba(34, 197, 94, 0.2);
   border-radius: 16px;
-  padding: 28px;
+  padding: 20px;
 }
 
-.trusted-section h2 {
-  font-size: 1.1rem;
+.trusted-panel h2 {
+  font-size: 0.95rem;
   font-weight: 600;
   color: #fafafa;
-  margin-bottom: 6px;
-  text-align: center;
+  margin-bottom: 4px;
 }
 
-.trusted-subtitle {
+.trusted-panel .trusted-subtitle {
   color: #71717a;
-  font-size: 0.75rem;
-  text-align: center;
-  margin-bottom: 20px;
+  font-size: 0.7rem;
+  margin-bottom: 16px;
+  text-align: left;
 }
 
-.trusted-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+.trusted-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.seller-card {
+.trusted-list .seller-card {
   display: flex;
   align-items: center;
   gap: 10px;
   background-color: #16161f;
   border: 1px solid #2a2a3a;
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 8px;
+  padding: 10px 12px;
   transition: all 0.2s ease;
 }
 
-.seller-card:hover {
+.trusted-list .seller-card:hover {
   border-color: #22c55e;
   box-shadow: 0 2px 10px rgba(34, 197, 94, 0.08);
 }
 
-.seller-card .seller-avatar {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+.trusted-list .seller-card .seller-avatar {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
   border-radius: 50%;
   background: linear-gradient(135deg, #22c55e, #16a34a);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: #fff;
 }
 
-.seller-card .seller-info {
+.trusted-list .seller-card .seller-info {
   flex: 1;
   min-width: 0;
 }
 
-.seller-card .seller-name {
-  font-size: 0.8rem;
+.trusted-list .seller-card .seller-name {
+  font-size: 0.75rem;
   font-weight: 600;
   color: #fafafa;
   white-space: nowrap;
@@ -358,32 +360,41 @@ header h1 span {
   text-overflow: ellipsis;
 }
 
-.seller-card .seller-platform {
-  font-size: 0.65rem;
+.trusted-list .seller-card .seller-platform {
+  font-size: 0.6rem;
   color: #71717a;
 }
 
-.seller-card .verified-badge {
+.trusted-list .seller-card .verified-badge {
   display: inline-flex;
   align-items: center;
   gap: 3px;
   background-color: rgba(34, 197, 94, 0.1);
   color: #22c55e;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 600;
-  padding: 3px 7px;
+  padding: 2px 6px;
   border-radius: 20px;
   border: 1px solid rgba(34, 197, 94, 0.2);
   white-space: nowrap;
 }
 
-.seller-card .verified-badge::before {
+.trusted-list .seller-card .verified-badge::before {
   content: '';
   display: inline-block;
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   background-color: #22c55e;
   border-radius: 50%;
+}
+
+.trusted-list .seller-avatar-img {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #22c55e;
 }
 
 .loading-text {
@@ -519,8 +530,25 @@ footer {
 }
 
 /* Responsive */
-@media (max-width: 860px) {
-  .layout-two-col {
+@media (max-width: 1024px) {
+  .layout-three-col {
+    grid-template-columns: 250px 1fr;
+    max-width: 860px;
+  }
+
+  .trusted-sidebar {
+    grid-column: 1 / -1;
+    position: static;
+  }
+
+  .trusted-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-three-col {
     grid-template-columns: 1fr;
     max-width: 540px;
   }
@@ -529,11 +557,19 @@ footer {
     position: static;
     order: -1;
   }
+
+  .trusted-sidebar {
+    position: static;
+  }
+
+  .trusted-list {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 @media (max-width: 540px) {
-  .trusted-grid {
-    grid-template-columns: 1fr;
+  .trusted-list {
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -589,9 +625,9 @@ footer {
 
 /* Avatar Image */
 .seller-avatar-img {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #22c55e;

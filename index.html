@@ -13,19 +13,19 @@
       <p class="subtitle">Submit your discounted subscription details to report a problematic seller</p>
     </header>
 
-    <div class="layout-two-col">
+    <div class="layout-three-col">
       <!-- Left: Reported Sellers Ranking -->
       <aside class="ranking-sidebar" id="ranking-sidebar">
         <div class="ranking-panel">
-          <h2>Reported Sellers</h2>
-          <p class="ranking-subtitle">Ranked by number of reports</p>
+          <h2>Top 10 Reported</h2>
+          <p class="ranking-subtitle">Sellers with most reports</p>
           <div class="ranking-list" id="ranking-list">
             <p class="loading-text">Loading...</p>
           </div>
         </div>
       </aside>
 
-      <!-- Right: Form -->
+      <!-- Center: Form -->
       <main class="form-column">
         <form id="report-form" class="report-form">
         <div class="form-group">
@@ -112,16 +112,18 @@
         <div id="result-content"></div>
       </div>
       </main>
-    </div>
 
-    <!-- Trusted Sellers Below Form -->
-    <section class="trusted-section">
-      <h2>Trusted Sellers</h2>
-      <p class="trusted-subtitle">These sellers have been verified and have zero reports</p>
-      <div class="trusted-grid" id="trusted-grid">
-        <p class="loading-text">Loading trusted sellers...</p>
-      </div>
-    </section>
+      <!-- Right: Trusted Sellers -->
+      <aside class="trusted-sidebar">
+        <div class="trusted-panel">
+          <h2>Trusted Sellers</h2>
+          <p class="trusted-subtitle">Verified with zero reports</p>
+          <div class="trusted-list" id="trusted-grid">
+            <p class="loading-text">Loading...</p>
+          </div>
+        </div>
+      </aside>
+    </div>
 
     <footer>
       <p class="footer-text">Report problematic subscription sellers</p>
