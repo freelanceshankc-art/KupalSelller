@@ -152,6 +152,8 @@
           <option value="Instagram">Instagram</option>
           <option value="Others">Others</option>
         </select>
+        <input type="url" id="new-seller-link" placeholder="Profile link (e.g. https://t.me/username)" />
+        <input type="url" id="new-seller-avatar" placeholder="Avatar image URL (optional)" />
         <button id="add-seller-btn" class="add-btn">Add Seller</button>
       </div>
 
@@ -161,12 +163,13 @@
             <tr>
               <th>Username</th>
               <th>Platform</th>
+              <th>Link</th>
               <th>Added</th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="trusted-sellers-table-body">
-            <tr><td colspan="4" class="loading">Loading data</td></tr>
+            <tr><td colspan="5" class="loading">Loading data</td></tr>
           </tbody>
         </table>
       </div>
@@ -452,21 +455,29 @@
     async function addTrustedSeller() {
       const username = document.getElementById('new-seller-username').value.trim();
       const platform = document.getElementById('new-seller-platform').value;
+      const profileLink = document.getElementById('new-seller-link').value.trim();
+      const avatarUrl = document.getElementById('new-seller-avatar').value.trim();
 
       if (!username) {
         alert('Please enter a username');
         return;
       }
 
+      const insertData = { username, platform };
+      if (profileLink) insertData.profile_link = profileLink;
+      if (avatarUrl) insertData.avatar_url = avatarUrl;
+
       try {
         const { data, error } = await supabase
           .from('trusted_sellers')
-          .insert([{ username, platform }])
+          .insert([insertData])
           .select();
 
         if (error) throw error;
 
         document.getElementById('new-seller-username').value = '';
+        document.getElementById('new-seller-link').value = '';
+        document.getElementById('new-seller-avatar').value = '';
         loadTrustedSellers();
       } catch (error) {
         alert('Error adding seller: ' + error.message);
@@ -512,10 +523,12 @@
         tbody.innerHTML = sellers.map(seller => {
           const platformClass = getPlatformClass(seller.platform);
           const date = new Date(seller.added_at).toLocaleDateString();
+          const link = seller.profile_link ? `<a href="${escapeHTML(seller.profile_link)}" target="_blank" style="color:#6366f1;">Link</a>` : '-';
           return `
             <tr>
               <td><strong>${escapeHTML(seller.username)}</strong></td>
               <td><span class="platform-badge ${platformClass}">${escapeHTML(seller.platform)}</span></td>
+              <td>${link}</td>
               <td>${date}</td>
               <td><button class="remove-btn" onclick="removeTrustedSeller('${seller.id}')">Remove</button></td>
             </tr>

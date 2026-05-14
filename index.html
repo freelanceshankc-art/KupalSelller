@@ -273,15 +273,23 @@
 
         grid.innerHTML = sellers.map(seller => {
           const initial = seller.username.replace('@', '').charAt(0).toUpperCase();
+          const avatarHTML = seller.avatar_url 
+            ? `<img class="seller-avatar-img" src="${escapeHTML(seller.avatar_url)}" alt="${escapeHTML(seller.username)}" />`
+            : `<div class="seller-avatar">${escapeHTML(initial)}</div>`;
+          const linkOpen = seller.profile_link ? `<a href="${escapeHTML(seller.profile_link)}" target="_blank" rel="noopener" class="seller-card-link">` : '';
+          const linkClose = seller.profile_link ? '</a>' : '';
+
           return `
+            ${linkOpen}
             <div class="seller-card">
-              <div class="seller-avatar">${escapeHTML(initial)}</div>
+              ${avatarHTML}
               <div class="seller-info">
                 <div class="seller-name">${escapeHTML(seller.username)}</div>
                 <div class="seller-platform">${escapeHTML(seller.platform)}</div>
               </div>
               <span class="verified-badge">Verified</span>
             </div>
+            ${linkClose}
           `;
         }).join('');
       } catch (error) {
