@@ -18,10 +18,27 @@ body {
   line-height: 1.6;
 }
 
-.container {
-  max-width: 540px;
+.page-wrapper {
+  max-width: 1100px;
   margin: 0 auto;
   padding: 50px 20px;
+}
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 40px;
+  align-items: start;
+}
+
+.form-column {
+  max-width: 540px;
+}
+
+.sidebar {
+  position: sticky;
+  top: 30px;
 }
 
 /* Header */
@@ -262,74 +279,78 @@ header h1 span {
 }
 
 /* ============================================
-   TRUSTED SELLERS SECTION
+   TRUSTED SELLERS SIDEBAR
    ============================================ */
 
 .trusted-section {
-  margin-top: 48px;
+  background-color: #111118;
+  border: 1px solid #1e1e2e;
+  border-radius: 16px;
+  padding: 24px;
 }
 
 .trusted-section h2 {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #fafafa;
   margin-bottom: 6px;
-  text-align: center;
 }
 
 .trusted-subtitle {
   color: #71717a;
-  font-size: 0.8125rem;
-  text-align: center;
-  margin-bottom: 24px;
+  font-size: 0.75rem;
+  margin-bottom: 20px;
 }
 
-.trusted-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+.trusted-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .seller-card {
-  background-color: #111118;
-  border: 1px solid #1e1e2e;
-  border-radius: 12px;
-  padding: 20px 16px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #16161f;
+  border: 1px solid #2a2a3a;
+  border-radius: 10px;
+  padding: 14px;
   transition: all 0.2s ease;
 }
 
 .seller-card:hover {
   border-color: #22c55e;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);
+  box-shadow: 0 2px 10px rgba(34, 197, 94, 0.08);
 }
 
 .seller-card .seller-avatar {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
   border-radius: 50%;
   background: linear-gradient(135deg, #22c55e, #16a34a);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 12px;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: #fff;
 }
 
+.seller-card .seller-info {
+  flex: 1;
+}
+
 .seller-card .seller-name {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: #fafafa;
-  margin-bottom: 4px;
 }
 
 .seller-card .seller-platform {
   font-size: 0.6875rem;
   color: #71717a;
-  margin-bottom: 10px;
 }
 
 .seller-card .verified-badge {
@@ -338,18 +359,19 @@ header h1 span {
   gap: 4px;
   background-color: rgba(34, 197, 94, 0.1);
   color: #22c55e;
-  font-size: 0.6875rem;
+  font-size: 0.625rem;
   font-weight: 600;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 20px;
   border: 1px solid rgba(34, 197, 94, 0.2);
+  white-space: nowrap;
 }
 
 .seller-card .verified-badge::before {
   content: '';
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   background-color: #22c55e;
   border-radius: 50%;
 }
@@ -381,8 +403,23 @@ footer {
 }
 
 /* Responsive */
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .form-column {
+    max-width: 100%;
+  }
+
+  .sidebar {
+    position: static;
+  }
+}
+
 @media (max-width: 480px) {
-  .container {
+  .page-wrapper {
     padding: 32px 16px;
   }
 
@@ -402,11 +439,6 @@ footer {
 
   .submit-btn {
     padding: 14px;
-  }
-
-  .trusted-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
   }
 
   .match-table {
