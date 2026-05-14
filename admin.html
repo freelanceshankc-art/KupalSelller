@@ -38,19 +38,65 @@
         <h3>Unique Sellers</h3>
         <div class="stat-value" id="stat-unique-sellers">0</div>
       </div>
-      <div class="stat-card">
-        <h3>Repeated Sellers</h3>
-        <div class="stat-value" id="stat-repeated-sellers">0</div>
+      <div class="stat-card alert">
+        <h3>Flagged Emails</h3>
+        <div class="stat-value" id="stat-flagged-emails">0</div>
       </div>
       <div class="stat-card">
-        <h3>Unique Emails</h3>
+        <h3>Total Emails</h3>
         <div class="stat-value" id="stat-unique-emails">0</div>
       </div>
     </div>
 
-    <!-- Repeated Sellers Panel -->
+    <!-- Flagged Emails - Same email sold by multiple sellers -->
+    <div class="panel flagged-panel">
+      <h2>⚠️ Flagged: Same Email Sold by Multiple Sellers</h2>
+      <p class="panel-description">These emails appear with different sellers — meaning the same subscription is being resold by multiple people.</p>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Sellers Involved</th>
+              <th>Times Reported</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="flagged-table-body">
+            <tr><td colspan="4" class="loading">Loading data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Search -->
     <div class="panel">
-      <h2>Sellers Ranked by Reports</h2>
+      <h2>🔍 Search Reports</h2>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search by email, seller username, or platform..." />
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Seller</th>
+              <th>Platform</th>
+              <th>Submitted</th>
+            </tr>
+          </thead>
+          <tbody id="search-table-body">
+            <tr><td colspan="5" class="empty-state">Type to search...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sellers Ranked -->
+    <div class="panel">
+      <h2>📊 Sellers Ranked by Reports</h2>
+      <p class="panel-description">Sellers with the most reports appear first. Red = high risk.</p>
       <div class="table-wrapper">
         <table class="data-table">
           <thead>
@@ -58,7 +104,7 @@
               <th>Seller Username</th>
               <th>Platform</th>
               <th>Reports</th>
-              <th>Unique Victims</th>
+              <th>Unique Emails</th>
               <th>Last Reported</th>
             </tr>
           </thead>
@@ -71,7 +117,7 @@
 
     <!-- All Reports Panel -->
     <div class="panel">
-      <h2>All Reports</h2>
+      <h2>📋 All Reports</h2>
       <div class="table-wrapper">
         <table class="data-table">
           <thead>
@@ -84,7 +130,7 @@
             </tr>
           </thead>
           <tbody id="reports-table-body">
-            <tr><td colspan="6" class="loading">Loading data</td></tr>
+            <tr><td colspan="5" class="loading">Loading data</td></tr>
           </tbody>
         </table>
       </div>
@@ -100,6 +146,7 @@
     );
 
     const ADMIN_PASSWORD = 'kupal2024';
+    let allReports = [];
 
     const loginGate = document.getElementById('login-gate');
     const adminContent = document.getElementById('admin-content');
@@ -135,9 +182,25 @@
 
     document.getElementById('refresh-btn').addEventListener('click', loadDashboard);
 
+    // Search functionality
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      if (!query) {
+        document.getElementById('search-table-body').innerHTML = '<tr><td colspan="5" class="empty-state">Type to search...</td></tr>';
+        return;
+      }
+      const filtered = allReports.filter(r => 
+        r.email.toLowerCase().includes(query) ||
+        r.supplier_username.toLowerCase().includes(query) ||
+        r.platform.toLowerCase().includes(query)
+      );
+      displaySearchResults(filtered);
+    });
+
     async function loadDashboard() {
+      showLoading('flagged-table-body', 4);
       showLoading('sellers-table-body', 5);
-      showLoading('reports-table-body', 6);
+      showLoading('reports-table-body', 5);
 
       try {
         const { data: reports, error } = await supabase
@@ -147,13 +210,15 @@
 
         if (error) throw error;
 
+        allReports = reports;
         updateStats(reports);
+        displayFlaggedEmails(reports);
         displayRepeatedSellers(reports);
         displayAllReports(reports);
       } catch (error) {
         console.error('Error loading dashboard:', error);
-        document.getElementById('sellers-table-body').innerHTML = `
-          <tr><td colspan="5" class="empty-state">Error loading data: ${escapeHTML(error.message)}</td></tr>
+        document.getElementById('flagged-table-body').innerHTML = `
+          <tr><td colspan="4" class="empty-state">Error: ${escapeHTML(error.message)}</td></tr>
         `;
       }
     }
@@ -164,16 +229,59 @@
       const uniqueSellers = new Set(reports.map(r => `${r.supplier_username}|${r.platform}`));
       document.getElementById('stat-unique-sellers').textContent = uniqueSellers.size;
 
-      const sellerCounts = {};
-      reports.forEach(r => {
-        const key = `${r.supplier_username}|${r.platform}`;
-        sellerCounts[key] = (sellerCounts[key] || 0) + 1;
-      });
-      const repeatedCount = Object.values(sellerCounts).filter(c => c > 1).length;
-      document.getElementById('stat-repeated-sellers').textContent = repeatedCount;
-
       const uniqueEmails = new Set(reports.map(r => r.email));
       document.getElementById('stat-unique-emails').textContent = uniqueEmails.size;
+
+      // Flagged emails: same email reported with different sellers
+      const emailSellers = {};
+      reports.forEach(r => {
+        if (!emailSellers[r.email]) emailSellers[r.email] = new Set();
+        emailSellers[r.email].add(r.supplier_username);
+      });
+      const flaggedCount = Object.values(emailSellers).filter(sellers => sellers.size > 1).length;
+      document.getElementById('stat-flagged-emails').textContent = flaggedCount;
+    }
+
+    function displayFlaggedEmails(reports) {
+      // Group by email and find emails with multiple different sellers
+      const emailData = {};
+      reports.forEach(r => {
+        if (!emailData[r.email]) {
+          emailData[r.email] = { sellers: new Set(), reports: [], count: 0 };
+        }
+        emailData[r.email].sellers.add(`${r.supplier_username} (${r.platform})`);
+        emailData[r.email].reports.push(r);
+        emailData[r.email].count++;
+      });
+
+      // Filter only emails with multiple sellers OR multiple reports
+      const flagged = Object.entries(emailData)
+        .filter(([email, data]) => data.count > 1)
+        .sort((a, b) => b[1].sellers.size - a[1].sellers.size || b[1].count - a[1].count);
+
+      const tbody = document.getElementById('flagged-table-body');
+
+      if (flagged.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No flagged emails yet. Flags appear when the same email is reported multiple times.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = flagged.map(([email, data]) => {
+        const sellersHTML = [...data.sellers].map(s => `<span class="seller-tag">${escapeHTML(s)}</span>`).join(' ');
+        const alertClass = data.sellers.size > 1 ? 'row-alert' : '';
+        const badge = data.sellers.size > 1 
+          ? '<span class="flag-badge danger">RESOLD</span>' 
+          : '<span class="flag-badge warning">REPEATED</span>';
+
+        return `
+          <tr class="${alertClass}">
+            <td><strong>${escapeHTML(email)}</strong> ${badge}</td>
+            <td>${sellersHTML}</td>
+            <td><span class="report-count ${data.count >= 3 ? 'high' : 'medium'}">${data.count}</span></td>
+            <td>${data.sellers.size > 1 ? '⚠️ Sold by ' + data.sellers.size + ' different sellers' : 'Reported ' + data.count + ' times'}</td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function displayRepeatedSellers(reports) {
@@ -226,11 +334,35 @@
       const tbody = document.getElementById('reports-table-body');
 
       if (reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No reports yet</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No reports yet</td></tr>';
         return;
       }
 
       tbody.innerHTML = reports.map(report => {
+        const platformClass = getPlatformClass(report.platform);
+        const date = new Date(report.created_at).toLocaleString();
+
+        return `
+          <tr>
+            <td>${escapeHTML(report.email)}</td>
+            <td>${escapeHTML(report.password)}</td>
+            <td><strong>${escapeHTML(report.supplier_username)}</strong></td>
+            <td><span class="platform-badge ${platformClass}">${escapeHTML(report.platform)}</span></td>
+            <td>${date}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function displaySearchResults(results) {
+      const tbody = document.getElementById('search-table-body');
+
+      if (results.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No results found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = results.map(report => {
         const platformClass = getPlatformClass(report.platform);
         const date = new Date(report.created_at).toLocaleString();
 
