@@ -1322,3 +1322,55 @@ footer {
   margin-bottom: 12px;
   padding-left: 4px;
 }
+
+
+
+/* ============================================
+   TELEGRAM CONTACT FLOATING BUTTON
+   ============================================ */
+
+.telegram-float-btn {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 998;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0088cc, #00aced);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0, 136, 204, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.telegram-float-btn:hover {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 136, 204, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.telegram-float-btn:active {
+  transform: scale(0.95);
+}
+
+.telegram-float-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 768px) {
+  .telegram-float-btn {
+    bottom: 90px;
+    left: 16px;
+    width: 46px;
+    height: 46px;
+  }
+
+  .telegram-float-btn svg {
+    width: 22px;
+    height: 22px;
+  }
+}
