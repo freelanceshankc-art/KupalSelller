@@ -191,6 +191,42 @@
       });
     });
 
+    // Device fingerprint + daily limit (max 3 reports per device per 24h)
+    function getDeviceId() {
+      let id = localStorage.getItem('device_fp');
+      if (!id) {
+        id = 'dev_' + Math.random().toString(36).substr(2, 12) + Date.now().toString(36);
+        localStorage.setItem('device_fp', id);
+      }
+      return id;
+    }
+
+    function checkDailyLimit() {
+      const MAX_REPORTS_PER_DAY = 3;
+      const today = new Date().toDateString();
+      const data = JSON.parse(localStorage.getItem('report_log') || '{}');
+
+      if (data.date !== today) {
+        // New day, reset
+        return { allowed: true, remaining: MAX_REPORTS_PER_DAY };
+      }
+
+      const count = data.count || 0;
+      return { allowed: count < MAX_REPORTS_PER_DAY, remaining: MAX_REPORTS_PER_DAY - count };
+    }
+
+    function recordReport() {
+      const today = new Date().toDateString();
+      const data = JSON.parse(localStorage.getItem('report_log') || '{}');
+
+      if (data.date !== today) {
+        localStorage.setItem('report_log', JSON.stringify({ date: today, count: 1 }));
+      } else {
+        data.count = (data.count || 0) + 1;
+        localStorage.setItem('report_log', JSON.stringify(data));
+      }
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -204,6 +240,13 @@
 
       if (!email || !password || !subscriptionType || !purchaseDate || !issueDate || !supplierUsername || !platform) {
         showResult('error', 'Please fill in all fields.');
+        return;
+      }
+
+      // Anti-spam: Device daily limit (max 3 reports per day)
+      const limitCheck = checkDailyLimit();
+      if (!limitCheck.allowed) {
+        showResult('error', `<p>You have reached the daily report limit (3 per day). Please try again tomorrow.</p>`);
         return;
       }
 
@@ -398,8 +441,11 @@
         }
 
         form.reset();
-        // Save cooldown timestamp
+        // Reset chip selection
+        chips.forEach(c => c.classList.remove('active'));
+        // Save cooldown timestamp + record daily report count
         localStorage.setItem('last_report_time', Date.now().toString());
+        recordReport();
       } catch (error) {
         console.error('Error:', error);
         showResult('error', `<p>Something went wrong: ${escapeHTML(error.message)}</p>`);
