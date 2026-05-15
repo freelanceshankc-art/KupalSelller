@@ -52,6 +52,76 @@
       </div>
     </div>
 
+    <!-- Trusted Seller Card Animation Customizer -->
+    <div class="panel animation-panel">
+      <h2>🎨 Trusted Seller Card Style</h2>
+      <p class="panel-description">Choose how trusted seller cards appear and animate on the main page. Changes apply instantly.</p>
+
+      <div class="animation-selector">
+        <div class="animation-options">
+          <label class="anim-option" data-style="none">
+            <input type="radio" name="card-animation" value="none">
+            <div class="anim-preview-card">
+              <span class="anim-label">None</span>
+              <span class="anim-desc">Static, no animation</span>
+            </div>
+          </label>
+          <label class="anim-option" data-style="glow-pulse">
+            <input type="radio" name="card-animation" value="glow-pulse">
+            <div class="anim-preview-card glow-pulse-demo">
+              <span class="anim-label">Glow Pulse</span>
+              <span class="anim-desc">Soft pulsing border glow</span>
+            </div>
+          </label>
+          <label class="anim-option" data-style="shine-sweep">
+            <input type="radio" name="card-animation" value="shine-sweep">
+            <div class="anim-preview-card shine-sweep-demo">
+              <span class="anim-label">Shine Sweep</span>
+              <span class="anim-desc">Light sweeps across card</span>
+            </div>
+          </label>
+          <label class="anim-option" data-style="border-gradient">
+            <input type="radio" name="card-animation" value="border-gradient">
+            <div class="anim-preview-card border-gradient-demo">
+              <span class="anim-label">Rainbow Border</span>
+              <span class="anim-desc">Animated gradient border</span>
+            </div>
+          </label>
+          <label class="anim-option" data-style="float-bounce">
+            <input type="radio" name="card-animation" value="float-bounce">
+            <div class="anim-preview-card float-bounce-demo">
+              <span class="anim-label">Float</span>
+              <span class="anim-desc">Gentle up/down floating</span>
+            </div>
+          </label>
+          <label class="anim-option" data-style="scale-hover">
+            <input type="radio" name="card-animation" value="scale-hover">
+            <div class="anim-preview-card scale-hover-demo">
+              <span class="anim-label">Pop on Hover</span>
+              <span class="anim-desc">Scales up with shadow</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="animation-live-preview">
+          <h3>Live Preview</h3>
+          <div class="preview-card-container" id="preview-card-container">
+            <div class="preview-seller-card" id="preview-seller-card">
+              <div class="preview-avatar">S</div>
+              <div class="preview-info">
+                <div class="preview-name">@SampleSeller</div>
+                <div class="preview-platform">Telegram</div>
+              </div>
+              <span class="preview-badge">Verified</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="save-animation-btn" class="add-btn" style="margin-top:16px;">Save Card Style</button>
+      <span id="save-animation-msg" style="margin-left:12px;color:#4ade80;font-size:0.8rem;display:none;">Saved!</span>
+    </div>
+
     <!-- Trusted Sellers Management -->
     <div class="panel">
       <h2>✅ Manage Trusted Sellers</h2>
@@ -792,6 +862,90 @@
     if (sessionStorage.getItem('admin_auth') === 'true') {
       loadBlacklistedSellers();
     }
+
+    // ============================================
+    // TRUSTED SELLER CARD ANIMATION CUSTOMIZER
+    // ============================================
+
+    const animOptions = document.querySelectorAll('.anim-option');
+    const previewCard = document.getElementById('preview-seller-card');
+    const previewContainer = document.getElementById('preview-card-container');
+    const saveAnimBtn = document.getElementById('save-animation-btn');
+    const saveAnimMsg = document.getElementById('save-animation-msg');
+    let selectedAnimation = localStorage.getItem('trusted_card_animation') || 'none';
+
+    // Set initial selected state
+    animOptions.forEach(opt => {
+      const radio = opt.querySelector('input[type="radio"]');
+      if (radio.value === selectedAnimation) {
+        radio.checked = true;
+        opt.classList.add('selected');
+      }
+
+      opt.addEventListener('click', () => {
+        animOptions.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        radio.checked = true;
+        selectedAnimation = radio.value;
+        updatePreview(selectedAnimation);
+      });
+    });
+
+    function updatePreview(style) {
+      // Remove all animation classes
+      previewCard.className = 'preview-seller-card';
+      previewContainer.className = 'preview-card-container';
+
+      if (style && style !== 'none') {
+        previewCard.classList.add('anim-' + style);
+      }
+    }
+
+    updatePreview(selectedAnimation);
+
+    saveAnimBtn.addEventListener('click', async () => {
+      localStorage.setItem('trusted_card_animation', selectedAnimation);
+
+      // Also try saving to supabase settings table (graceful fail)
+      try {
+        await supabase
+          .from('site_settings')
+          .upsert([{ key: 'trusted_card_animation', value: selectedAnimation }], { onConflict: 'key' });
+      } catch (e) {
+        // Fallback: localStorage is enough
+      }
+
+      saveAnimMsg.style.display = 'inline';
+      setTimeout(() => { saveAnimMsg.style.display = 'none'; }, 2000);
+    });
+
+    // Load saved animation on init
+    (async function loadSavedAnimation() {
+      try {
+        const { data } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'trusted_card_animation')
+          .single();
+
+        if (data && data.value) {
+          selectedAnimation = data.value;
+          localStorage.setItem('trusted_card_animation', selectedAnimation);
+          animOptions.forEach(opt => {
+            const radio = opt.querySelector('input[type="radio"]');
+            if (radio.value === selectedAnimation) {
+              radio.checked = true;
+              opt.classList.add('selected');
+            } else {
+              opt.classList.remove('selected');
+            }
+          });
+          updatePreview(selectedAnimation);
+        }
+      } catch (e) {
+        // Use localStorage value
+      }
+    })();
   </script>
 </body>
 </html>

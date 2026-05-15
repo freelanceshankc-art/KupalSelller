@@ -837,6 +837,122 @@
 
     loadReportedSellers();
     loadTrustedSellers();
+    loadCardAnimation();
+
+    // ============================================
+    // LOAD TRUSTED CARD ANIMATION STYLE
+    // ============================================
+    async function loadCardAnimation() {
+      let animStyle = localStorage.getItem('trusted_card_animation') || 'none';
+
+      // Try loading from supabase
+      try {
+        const { data } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'trusted_card_animation')
+          .single();
+
+        if (data && data.value) {
+          animStyle = data.value;
+          localStorage.setItem('trusted_card_animation', animStyle);
+        }
+      } catch (e) {
+        // Use localStorage fallback
+      }
+
+      if (animStyle && animStyle !== 'none') {
+        // Inject animation CSS class to the trusted list
+        const style = document.createElement('style');
+        style.id = 'trusted-card-anim-style';
+
+        let css = '';
+        switch (animStyle) {
+          case 'glow-pulse':
+            css = `
+              .trusted-list .seller-card {
+                animation: tcGlowPulse 2.5s ease-in-out infinite;
+              }
+              @keyframes tcGlowPulse {
+                0%, 100% { box-shadow: 0 0 4px rgba(74, 222, 128, 0.15); border-color: rgba(74, 222, 128, 0.1); }
+                50% { box-shadow: 0 0 18px rgba(74, 222, 128, 0.4), 0 0 36px rgba(74, 222, 128, 0.15); border-color: rgba(74, 222, 128, 0.4); }
+              }
+            `;
+            break;
+          case 'shine-sweep':
+            css = `
+              .trusted-list .seller-card {
+                position: relative;
+                overflow: hidden;
+              }
+              .trusted-list .seller-card::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 50%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+                animation: tcShineSweep 3s ease-in-out infinite;
+              }
+              @keyframes tcShineSweep {
+                0% { left: -100%; }
+                100% { left: 200%; }
+              }
+            `;
+            break;
+          case 'border-gradient':
+            css = `
+              .trusted-list .seller-card {
+                border: 2px solid transparent !important;
+                background-image: linear-gradient(rgba(24, 24, 32, 0.6), rgba(24, 24, 32, 0.6)), linear-gradient(135deg, #4ade80, #06b6d4, #818cf8, #c084fc, #4ade80) !important;
+                background-origin: border-box !important;
+                background-clip: padding-box, border-box !important;
+                animation: tcBorderRotate 4s linear infinite;
+              }
+              @keyframes tcBorderRotate {
+                0% { filter: hue-rotate(0deg); }
+                100% { filter: hue-rotate(360deg); }
+              }
+            `;
+            break;
+          case 'float-bounce':
+            css = `
+              .trusted-list .seller-card {
+                animation: tcFloat 3s ease-in-out infinite;
+              }
+              .trusted-list .seller-card:nth-child(odd) {
+                animation-delay: 0.3s;
+              }
+              .trusted-list .seller-card:nth-child(3n) {
+                animation-delay: 0.6s;
+              }
+              @keyframes tcFloat {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-5px); }
+              }
+            `;
+            break;
+          case 'scale-hover':
+            css = `
+              .trusted-list .seller-card {
+                transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+              }
+              .trusted-list .seller-card:hover {
+                transform: scale(1.05) translateX(0) !important;
+                box-shadow: 0 10px 30px rgba(74, 222, 128, 0.2) !important;
+                border-color: rgba(74, 222, 128, 0.4) !important;
+              }
+            `;
+            break;
+        }
+
+        if (css) {
+          style.textContent = css;
+          document.head.appendChild(style);
+        }
+      }
+    }
 
     // Navigation toggle for mobile
     const navToggle = document.getElementById('nav-toggle');
