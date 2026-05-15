@@ -1688,3 +1688,76 @@ footer {
     font-size: 0.85rem;
   }
 }
+
+
+
+/* ============================================
+   PER-CARD TRUSTED SELLER ANIMATIONS
+   ============================================ */
+
+/* Glow Pulse */
+.trusted-list .seller-card.tc-anim-glow-pulse {
+  animation: tcGlowPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes tcGlowPulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(74, 222, 128, 0.15); border-color: rgba(74, 222, 128, 0.1); }
+  50% { box-shadow: 0 0 18px rgba(74, 222, 128, 0.4), 0 0 36px rgba(74, 222, 128, 0.15); border-color: rgba(74, 222, 128, 0.4); }
+}
+
+/* Shine Sweep */
+.trusted-list .seller-card.tc-anim-shine-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.trusted-list .seller-card.tc-anim-shine-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: tcShineSweep 3s ease-in-out infinite;
+}
+
+@keyframes tcShineSweep {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* Rainbow Border */
+.trusted-list .seller-card.tc-anim-border-gradient {
+  border: 2px solid transparent !important;
+  background-image: linear-gradient(rgba(24, 24, 32, 0.6), rgba(24, 24, 32, 0.6)), linear-gradient(135deg, #4ade80, #06b6d4, #818cf8, #c084fc, #4ade80) !important;
+  background-origin: border-box !important;
+  background-clip: padding-box, border-box !important;
+  animation: tcBorderRotate 4s linear infinite;
+}
+
+@keyframes tcBorderRotate {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* Float Bounce */
+.trusted-list .seller-card.tc-anim-float-bounce {
+  animation: tcFloat 3s ease-in-out infinite;
+}
+
+@keyframes tcFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Scale on Hover */
+.trusted-list .seller-card.tc-anim-scale-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+
+.trusted-list .seller-card.tc-anim-scale-hover:hover {
+  transform: scale(1.05) translateX(0) !important;
+  box-shadow: 0 10px 30px rgba(74, 222, 128, 0.2) !important;
+  border-color: rgba(74, 222, 128, 0.4) !important;
+}

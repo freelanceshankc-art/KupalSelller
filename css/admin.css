@@ -1153,3 +1153,46 @@ header h1 {
     padding: 10px 12px;
   }
 }
+
+
+
+/* ============================================
+   INLINE ANIMATION SELECT & BADGE
+   ============================================ */
+
+.inline-anim-select {
+  padding: 4px 8px;
+  background-color: #252525;
+  border: 1px solid #3a3a3a;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-size: 0.7rem;
+  font-family: 'Segoe UI', sans-serif;
+  cursor: pointer;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.inline-anim-select:focus {
+  outline: none;
+  border-color: #818cf8;
+}
+
+.anim-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: rgba(113, 113, 122, 0.15);
+  color: #71717a;
+}
+
+.anim-badge.anim-badge-active {
+  background-color: rgba(129, 140, 248, 0.15);
+  color: #818cf8;
+}
+
+#new-seller-animation {
+  min-width: 130px;
+}
