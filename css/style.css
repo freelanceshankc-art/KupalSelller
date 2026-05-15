@@ -310,6 +310,43 @@ header h1 span {
 }
 
 /* ============================================
+   CHIP / BUTTON SELECT
+   ============================================ */
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 8px 16px;
+  background: rgba(24, 24, 32, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  color: #a1a1aa;
+  font-size: 0.82rem;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.chip:hover {
+  border-color: rgba(129, 140, 248, 0.4);
+  color: #e4e4e7;
+  background: rgba(129, 140, 248, 0.08);
+}
+
+.chip.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+  border-color: rgba(129, 140, 248, 0.6);
+  color: #c7d2fe;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.15);
+}
+
+/* ============================================
    SUBMIT BUTTON
    ============================================ */
 

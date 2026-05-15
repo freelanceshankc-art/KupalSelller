@@ -66,14 +66,18 @@
         </div>
 
         <div class="form-group">
-          <label for="subscription-type">Subscription Type</label>
-          <input 
-            type="text" 
-            id="subscription-type" 
-            name="subscription-type" 
-            placeholder="e.g. ChatGPT, Grok, CapCut, Netflix, Spotify"
-            required
-          >
+          <label>Subscription Type</label>
+          <div class="chip-group" id="chip-group">
+            <button type="button" class="chip" data-value="ChatGPT">ChatGPT</button>
+            <button type="button" class="chip" data-value="Grok">Grok</button>
+            <button type="button" class="chip" data-value="CapCut">CapCut</button>
+            <button type="button" class="chip" data-value="Netflix">Netflix</button>
+            <button type="button" class="chip" data-value="Spotify">Spotify</button>
+            <button type="button" class="chip" data-value="Canva">Canva</button>
+            <button type="button" class="chip" data-value="YouTube Premium">YouTube Premium</button>
+            <button type="button" class="chip" data-value="Other">Other</button>
+          </div>
+          <input type="hidden" id="subscription-type" name="subscription-type" required>
         </div>
 
         <div class="form-group">
@@ -158,6 +162,18 @@
     const resultSection = document.getElementById('result-section');
     const resultContent = document.getElementById('result-content');
     const submitBtn = document.getElementById('submit-btn');
+
+    // Chip/Button selection for subscription type
+    const chips = document.querySelectorAll('.chip');
+    const subscriptionInput = document.getElementById('subscription-type');
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        subscriptionInput.value = chip.dataset.value;
+      });
+    });
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
