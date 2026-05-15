@@ -263,18 +263,89 @@
 
         // If there are existing matches, show them
         if (existingReports && existingReports.length > 0) {
+          // Calculate scam likelihood based on patterns
+          const totalReports = existingReports.length;
+          const uniqueSellers = new Set(existingReports.map(r => r.supplier_username)).size;
+          const shortGaps = existingReports.filter(r => {
+            if (!r.purchase_date || !r.issue_date) return false;
+            const days = Math.floor((new Date(r.issue_date) - new Date(r.purchase_date)) / (1000 * 60 * 60 * 24));
+            return days <= 7;
+          }).length;
+
+          let scamLevel = 'low';
+          let scamPercent = 25;
+          let scamText = 'Low Risk';
+          if (totalReports >= 3 || uniqueSellers >= 2 || shortGaps >= 2) {
+            scamLevel = 'high';
+            scamPercent = 90;
+            scamText = 'High Risk - Likely Scam';
+          } else if (totalReports >= 2 || shortGaps >= 1) {
+            scamLevel = 'medium';
+            scamPercent = 60;
+            scamText = 'Medium Risk - Suspicious';
+          }
+
           let matchHTML = `
             <div class="match-found">
               <h3>Match Found!</h3>
-              <p>This subscription has been reported before:</p>
+              <p>This subscription email has been reported <strong>${totalReports} time(s)</strong> before your report.</p>
+
+              <div class="scam-indicator scam-${scamLevel}">
+                <div class="scam-indicator-header">
+                  <span class="scam-indicator-label">Scam Likelihood</span>
+                  <span class="scam-indicator-text">${scamText}</span>
+                </div>
+                <div class="scam-meter">
+                  <div class="scam-meter-fill" style="width: ${scamPercent}%"></div>
+                </div>
+                <div class="scam-indicator-details">
+                  <span>${totalReports} report(s)</span>
+                  <span>${uniqueSellers} seller(s) involved</span>
+                  <span>${shortGaps} early lockout(s)</span>
+                </div>
+              </div>
           `;
 
           existingReports.forEach(report => {
             const date = new Date(report.created_at).toLocaleDateString();
             const purchased = report.purchase_date || 'N/A';
             const issue = report.issue_date || 'N/A';
+
+            // Calculate days used
+            let daysUsed = 'N/A';
+            let daysClass = '';
+            let daysWarning = '';
+            if (report.purchase_date && report.issue_date) {
+              const diffMs = new Date(report.issue_date) - new Date(report.purchase_date);
+              const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+              daysUsed = diffDays + ' day' + (diffDays !== 1 ? 's' : '');
+              if (diffDays <= 3) {
+                daysClass = 'days-critical';
+                daysWarning = 'Account was likely resold immediately';
+              } else if (diffDays <= 7) {
+                daysClass = 'days-warning';
+                daysWarning = 'Suspiciously short usage period';
+              } else if (diffDays <= 14) {
+                daysClass = 'days-caution';
+                daysWarning = 'Below expected 30-day period';
+              } else {
+                daysClass = 'days-normal';
+              }
+            }
+
             matchHTML += `
               <div class="match-card">
+                <div class="match-card-header">
+                  <span class="match-card-seller">${escapeHTML(report.supplier_username)}</span>
+                  <span class="match-card-platform">${escapeHTML(report.platform)}</span>
+                </div>
+                ${daysUsed !== 'N/A' ? `
+                <div class="days-used-badge ${daysClass}">
+                  <span class="days-used-number">${daysUsed}</span>
+                  <span class="days-used-label">before lockout</span>
+                </div>
+                ${daysWarning ? `<p class="days-warning-text">${daysWarning}</p>` : ''}
+                ` : ''}
                 <div class="match-card-row">
                   <span class="match-label">Email</span>
                   <span class="match-value">${escapeHTML(report.email)}</span>
@@ -282,14 +353,6 @@
                 <div class="match-card-row">
                   <span class="match-label">Type</span>
                   <span class="match-value">${escapeHTML(report.subscription_type || 'N/A')}</span>
-                </div>
-                <div class="match-card-row">
-                  <span class="match-label">Supplier</span>
-                  <span class="match-value">${escapeHTML(report.supplier_username)}</span>
-                </div>
-                <div class="match-card-row">
-                  <span class="match-label">Platform</span>
-                  <span class="match-value">${escapeHTML(report.platform)}</span>
                 </div>
                 <div class="match-card-row">
                   <span class="match-label">Purchased</span>
@@ -308,7 +371,6 @@
           });
 
           matchHTML += `
-              <p class="warning-text">This seller has been reported ${existingReports.length} time(s) before your report.</p>
             </div>
           `;
 

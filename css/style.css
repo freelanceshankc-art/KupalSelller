@@ -1123,3 +1123,202 @@ footer {
   word-break: break-all;
   max-width: 60%;
 }
+
+
+
+/* ============================================
+   SCAM LIKELIHOOD INDICATOR
+   ============================================ */
+
+.scam-indicator {
+  margin: 16px 0;
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(24, 24, 32, 0.6);
+}
+
+.scam-indicator.scam-high {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.scam-indicator.scam-medium {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.scam-indicator.scam-low {
+  border-color: rgba(74, 222, 128, 0.2);
+  background: rgba(74, 222, 128, 0.04);
+}
+
+.scam-indicator-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.scam-indicator-label {
+  color: #a1a1aa;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.scam-indicator-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.scam-high .scam-indicator-text {
+  color: #f87171;
+}
+
+.scam-medium .scam-indicator-text {
+  color: #fbbf24;
+}
+
+.scam-low .scam-indicator-text {
+  color: #4ade80;
+}
+
+.scam-meter {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.scam-meter-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+}
+
+.scam-high .scam-meter-fill {
+  background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.scam-medium .scam-meter-fill {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.scam-low .scam-meter-fill {
+  background: linear-gradient(90deg, #22c55e, #4ade80);
+}
+
+.scam-indicator-details {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.scam-indicator-details span {
+  color: #71717a;
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+/* ============================================
+   MATCH CARD — REDESIGNED WITH SELLER HEADER
+   ============================================ */
+
+.match-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.match-card-seller {
+  color: #fafafa;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.match-card-platform {
+  color: #818cf8;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  background: rgba(129, 140, 248, 0.1);
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  border-radius: 20px;
+}
+
+/* ============================================
+   DAYS USED BADGE
+   ============================================ */
+
+.days-used-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.days-used-badge.days-critical {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.days-used-badge.days-warning {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.days-used-badge.days-caution {
+  background: rgba(234, 179, 8, 0.06);
+  border: 1px solid rgba(234, 179, 8, 0.15);
+}
+
+.days-used-badge.days-normal {
+  background: rgba(74, 222, 128, 0.06);
+  border: 1px solid rgba(74, 222, 128, 0.15);
+}
+
+.days-used-number {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.days-critical .days-used-number {
+  color: #f87171;
+}
+
+.days-warning .days-used-number {
+  color: #fbbf24;
+}
+
+.days-caution .days-used-number {
+  color: #eab308;
+}
+
+.days-normal .days-used-number {
+  color: #4ade80;
+}
+
+.days-used-label {
+  color: #71717a;
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.days-warning-text {
+  color: #fca5a5;
+  font-size: 0.72rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
