@@ -45,3 +45,31 @@ CREATE TABLE trusted_sellers (
 --   platform TEXT NOT NULL,
 --   added_at TIMESTAMPTZ DEFAULT NOW()
 -- );
+
+
+
+-- ============================================
+-- BLACKLISTED SELLERS TABLE (Manual Kupal List)
+-- ============================================
+CREATE TABLE blacklisted_sellers (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  username TEXT NOT NULL,
+  platform TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  added_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index for faster lookups
+CREATE INDEX idx_blacklisted_username ON blacklisted_sellers (username, platform);
+
+-- ============================================
+-- IF YOU ALREADY HAVE OTHER TABLES, just run this:
+-- ============================================
+-- CREATE TABLE blacklisted_sellers (
+--   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+--   username TEXT NOT NULL,
+--   platform TEXT NOT NULL,
+--   reason TEXT NOT NULL,
+--   added_at TIMESTAMPTZ DEFAULT NOW()
+-- );
+-- CREATE INDEX idx_blacklisted_username ON blacklisted_sellers (username, platform);

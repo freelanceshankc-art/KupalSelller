@@ -358,31 +358,50 @@
       }
     }
 
-    // Load reported sellers ranking
+    // Load reported sellers ranking (merged: automatic reports + manual blacklist)
     async function loadReportedSellers() {
       const list = document.getElementById('ranking-list');
 
       try {
-        const { data: reports, error } = await supabase
+        // Fetch automatic reports
+        const { data: reports, error: reportsError } = await supabase
           .from('reports')
           .select('supplier_username, platform');
 
-        if (error) throw error;
+        if (reportsError) throw reportsError;
 
-        if (!reports || reports.length === 0) {
-          list.innerHTML = '<p style="color:#71717a; text-align:center; font-size:0.75rem;">No reports yet</p>';
-          return;
+        // Fetch manually blacklisted sellers
+        const { data: blacklisted, error: blError } = await supabase
+          .from('blacklisted_sellers')
+          .select('username, platform, reason');
+
+        if (blError) throw blError;
+
+        // Count reports per seller from automatic reports
+        const sellerCounts = {};
+
+        if (reports && reports.length > 0) {
+          reports.forEach(r => {
+            const key = `${r.supplier_username.toLowerCase()}|${r.platform}`;
+            if (!sellerCounts[key]) {
+              sellerCounts[key] = { username: r.supplier_username, platform: r.platform, count: 0, blacklisted: false, reason: '' };
+            }
+            sellerCounts[key].count++;
+          });
         }
 
-        // Count reports per seller
-        const sellerCounts = {};
-        reports.forEach(r => {
-          const key = `${r.supplier_username}|${r.platform}`;
-          if (!sellerCounts[key]) {
-            sellerCounts[key] = { username: r.supplier_username, platform: r.platform, count: 0 };
-          }
-          sellerCounts[key].count++;
-        });
+        // Merge blacklisted sellers - they get a guaranteed boost (count as 10 reports each)
+        if (blacklisted && blacklisted.length > 0) {
+          blacklisted.forEach(b => {
+            const key = `${b.username.toLowerCase()}|${b.platform}`;
+            if (!sellerCounts[key]) {
+              sellerCounts[key] = { username: b.username, platform: b.platform, count: 0, blacklisted: true, reason: b.reason };
+            }
+            sellerCounts[key].count += 10;
+            sellerCounts[key].blacklisted = true;
+            sellerCounts[key].reason = b.reason;
+          });
+        }
 
         // Sort by count descending, show top 10
         const ranked = Object.values(sellerCounts)
@@ -395,13 +414,15 @@
         }
 
         list.innerHTML = ranked.map((seller, index) => {
-          const riskClass = seller.count >= 5 ? 'high-risk' : seller.count >= 3 ? 'medium-risk' : 'low-risk';
+          const riskClass = seller.blacklisted ? 'high-risk' : seller.count >= 5 ? 'high-risk' : seller.count >= 3 ? 'medium-risk' : 'low-risk';
           const rankNum = index + 1;
+          const badge = seller.blacklisted ? ' <span style="font-size:0.55rem;color:#ef4444;border:1px solid rgba(239,68,68,0.3);padding:1px 4px;border-radius:3px;">BLACKLISTED</span>' : '';
+          const tooltip = seller.reason ? ` title="${escapeHTML(seller.reason)}"` : '';
           return `
-            <div class="rank-item ${riskClass}">
+            <div class="rank-item ${riskClass}"${tooltip}>
               <span class="rank-number">${rankNum}</span>
               <div class="rank-info">
-                <div class="rank-name">${escapeHTML(seller.username)}</div>
+                <div class="rank-name">${escapeHTML(seller.username)}${badge}</div>
                 <div class="rank-platform">${escapeHTML(seller.platform)}</div>
               </div>
               <span class="rank-count">${seller.count}</span>

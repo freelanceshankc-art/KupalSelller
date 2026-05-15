@@ -507,3 +507,83 @@ header h1 {
 .remove-btn:hover {
   background-color: rgba(239, 68, 68, 0.1);
 }
+
+
+
+/* ============================================
+   BLACKLISTED SELLERS PANEL
+   ============================================ */
+
+.blacklist-panel {
+  border-color: #e94560;
+  border-width: 2px;
+}
+
+.blacklist-panel h2 {
+  color: #ff6b6b;
+}
+
+.blacklist-add-btn {
+  background-color: #e94560 !important;
+}
+
+.blacklist-add-btn:hover {
+  background-color: #d63851 !important;
+}
+
+/* Edit Row (inline edit form) */
+.edit-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 14px 16px;
+  background-color: #1f1f2e;
+  border: 1px solid #ff8c00;
+  border-radius: 8px;
+}
+
+.edit-row strong {
+  color: #ff8c00;
+  font-size: 0.85rem;
+  margin-right: 4px;
+}
+
+.edit-row input,
+.edit-row select {
+  padding: 10px 14px;
+  background-color: #252525;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 0.85rem;
+  font-family: 'Segoe UI', sans-serif;
+  flex: 1;
+  min-width: 120px;
+}
+
+.edit-row input:focus,
+.edit-row select:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.15);
+}
+
+/* Edit Button */
+.edit-btn {
+  padding: 5px 12px;
+  background-color: transparent;
+  color: #ff8c00;
+  border: 1px solid #ff8c00;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 6px;
+}
+
+.edit-btn:hover {
+  background-color: rgba(255, 140, 0, 0.1);
+}

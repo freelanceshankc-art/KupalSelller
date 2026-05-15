@@ -46,6 +46,10 @@
         <h3>Total Emails</h3>
         <div class="stat-value" id="stat-unique-emails">0</div>
       </div>
+      <div class="stat-card">
+        <h3>Blacklisted</h3>
+        <div class="stat-value" id="stat-blacklisted">0</div>
+      </div>
     </div>
 
     <!-- Trusted Sellers Management -->
@@ -81,6 +85,62 @@
           </thead>
           <tbody id="trusted-sellers-table-body">
             <tr><td colspan="4" class="loading">Loading data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Blacklisted Sellers (Manual Kupal List) -->
+    <div class="panel blacklist-panel">
+      <h2>🚫 Manage Blacklisted Sellers (Kupal List)</h2>
+      <p class="panel-description">Manually add, edit, or remove sellers from the blacklist. These merge into the Top 10 Kupal ranking on the main page.</p>
+      
+      <div class="add-seller-form" id="blacklist-form">
+        <input type="text" id="bl-username" placeholder="Seller username" />
+        <select id="bl-platform">
+          <option value="Telegram">Telegram</option>
+          <option value="Discord">Discord</option>
+          <option value="Facebook">Facebook</option>
+          <option value="WhatsApp">WhatsApp</option>
+          <option value="Twitter/X">Twitter/X</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" id="bl-reason" placeholder="Reason (e.g. scammer, fake accounts)" style="flex:2;" />
+        <button id="add-blacklist-btn" class="add-btn blacklist-add-btn">Add to Blacklist</button>
+      </div>
+
+      <!-- Edit Modal (inline) -->
+      <div id="bl-edit-row" class="edit-row" style="display:none;">
+        <strong>Editing:</strong>
+        <input type="text" id="bl-edit-username" placeholder="Username" />
+        <select id="bl-edit-platform">
+          <option value="Telegram">Telegram</option>
+          <option value="Discord">Discord</option>
+          <option value="Facebook">Facebook</option>
+          <option value="WhatsApp">WhatsApp</option>
+          <option value="Twitter/X">Twitter/X</option>
+          <option value="Instagram">Instagram</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" id="bl-edit-reason" placeholder="Reason" style="flex:2;" />
+        <button id="bl-save-edit-btn" class="add-btn">Save</button>
+        <button id="bl-cancel-edit-btn" class="remove-btn">Cancel</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Platform</th>
+              <th>Reason</th>
+              <th>Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="blacklist-table-body">
+            <tr><td colspan="5" class="loading">Loading data</td></tr>
           </tbody>
         </table>
       </div>
@@ -255,6 +315,7 @@
         displayRepeatedSellers(reports);
         displayAllReports(reports);
         loadTrustedSellers();
+        loadBlacklistedSellers();
       } catch (error) {
         console.error('Error loading dashboard:', error);
         document.getElementById('flagged-table-body').innerHTML = `
@@ -539,9 +600,157 @@
       }
     }
 
-    // Load trusted sellers on dashboard load
+    // ============================================
+    // BLACKLISTED SELLERS CRUD
+    // ============================================
+
+    let editingBlacklistId = null;
+
+    document.getElementById('add-blacklist-btn').addEventListener('click', addBlacklistedSeller);
+    document.getElementById('bl-username').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addBlacklistedSeller();
+    });
+    document.getElementById('bl-save-edit-btn').addEventListener('click', saveBlacklistEdit);
+    document.getElementById('bl-cancel-edit-btn').addEventListener('click', cancelBlacklistEdit);
+
+    async function addBlacklistedSeller() {
+      const username = document.getElementById('bl-username').value.trim();
+      const platform = document.getElementById('bl-platform').value;
+      const reason = document.getElementById('bl-reason').value.trim();
+
+      if (!username) {
+        alert('Please enter a username');
+        return;
+      }
+      if (!reason) {
+        alert('Please enter a reason');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('blacklisted_sellers')
+          .insert([{ username, platform, reason }])
+          .select();
+
+        if (error) throw error;
+
+        document.getElementById('bl-username').value = '';
+        document.getElementById('bl-reason').value = '';
+        loadBlacklistedSellers();
+      } catch (error) {
+        alert('Error adding to blacklist: ' + error.message);
+      }
+    }
+
+    async function removeBlacklistedSeller(id) {
+      if (!confirm('Remove this seller from the blacklist?')) return;
+
+      try {
+        const { error } = await supabase
+          .from('blacklisted_sellers')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+        loadBlacklistedSellers();
+      } catch (error) {
+        alert('Error removing seller: ' + error.message);
+      }
+    }
+
+    function startEditBlacklist(id, username, platform, reason) {
+      editingBlacklistId = id;
+      document.getElementById('bl-edit-username').value = username;
+      document.getElementById('bl-edit-platform').value = platform;
+      document.getElementById('bl-edit-reason').value = reason;
+      document.getElementById('bl-edit-row').style.display = 'flex';
+      document.getElementById('blacklist-form').style.display = 'none';
+    }
+
+    function cancelBlacklistEdit() {
+      editingBlacklistId = null;
+      document.getElementById('bl-edit-row').style.display = 'none';
+      document.getElementById('blacklist-form').style.display = 'flex';
+    }
+
+    async function saveBlacklistEdit() {
+      if (!editingBlacklistId) return;
+
+      const username = document.getElementById('bl-edit-username').value.trim();
+      const platform = document.getElementById('bl-edit-platform').value;
+      const reason = document.getElementById('bl-edit-reason').value.trim();
+
+      if (!username || !reason) {
+        alert('Username and reason are required');
+        return;
+      }
+
+      try {
+        const { error } = await supabase
+          .from('blacklisted_sellers')
+          .update({ username, platform, reason })
+          .eq('id', editingBlacklistId);
+
+        if (error) throw error;
+
+        cancelBlacklistEdit();
+        loadBlacklistedSellers();
+      } catch (error) {
+        alert('Error updating seller: ' + error.message);
+      }
+    }
+
+    async function loadBlacklistedSellers() {
+      const tbody = document.getElementById('blacklist-table-body');
+      tbody.innerHTML = '<tr><td colspan="5" class="loading">Loading...</td></tr>';
+
+      try {
+        const { data: sellers, error } = await supabase
+          .from('blacklisted_sellers')
+          .select('*')
+          .order('added_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Update stat
+        document.getElementById('stat-blacklisted').textContent = sellers ? sellers.length : 0;
+
+        if (!sellers || sellers.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No blacklisted sellers yet</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = sellers.map(seller => {
+          const platformClass = getPlatformClass(seller.platform);
+          const date = new Date(seller.added_at).toLocaleDateString();
+          const escapedUsername = escapeHTML(seller.username).replace(/'/g, "\\'");
+          const escapedReason = escapeHTML(seller.reason).replace(/'/g, "\\'");
+          return `
+            <tr>
+              <td><strong>${escapeHTML(seller.username)}</strong></td>
+              <td><span class="platform-badge ${platformClass}">${escapeHTML(seller.platform)}</span></td>
+              <td>${escapeHTML(seller.reason)}</td>
+              <td>${date}</td>
+              <td>
+                <button class="edit-btn" onclick="startEditBlacklist('${seller.id}', '${escapedUsername}', '${seller.platform}', '${escapedReason}')">Edit</button>
+                <button class="remove-btn" onclick="removeBlacklistedSeller('${seller.id}')">Delete</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (error) {
+        tbody.innerHTML = `<tr><td colspan="5" class="empty-state">Error: ${escapeHTML(error.message)}</td></tr>`;
+      }
+    }
+
+    // Make blacklist functions available globally
+    window.removeBlacklistedSeller = removeBlacklistedSeller;
+    window.startEditBlacklist = startEditBlacklist;
+
+    // Load blacklisted sellers on dashboard load
     if (sessionStorage.getItem('admin_auth') === 'true') {
-      loadTrustedSellers();
+      loadBlacklistedSellers();
     }
   </script>
 </body>
