@@ -465,15 +465,15 @@
       }
     }
 
-    // Load reported sellers ranking (merged: automatic reports + manual blacklist)
+    // Load reported sellers ranking (only sellers with RESOLD reports + manual blacklist)
     async function loadReportedSellers() {
       const list = document.getElementById('ranking-list');
 
       try {
-        // Fetch automatic reports
+        // Fetch all reports (need email to detect resold accounts)
         const { data: reports, error: reportsError } = await supabase
           .from('reports')
-          .select('supplier_username, platform');
+          .select('supplier_username, platform, email');
 
         if (reportsError) throw reportsError;
 
@@ -484,11 +484,44 @@
 
         if (blError) throw blError;
 
-        // Count reports per seller from automatic reports
+        // Find resold emails: emails reported by MORE THAN ONE seller
+        const emailSellers = {};
+        if (reports && reports.length > 0) {
+          reports.forEach(r => {
+            if (!emailSellers[r.email]) emailSellers[r.email] = new Set();
+            emailSellers[r.email].add(r.supplier_username.toLowerCase());
+          });
+        }
+
+        // Get list of resold emails (sold by 2+ different sellers)
+        const resoldEmails = new Set(
+          Object.entries(emailSellers)
+            .filter(([email, sellers]) => sellers.size > 1)
+            .map(([email]) => email)
+        );
+
+        // Also count emails reported multiple times by same seller (same account recycled)
+        const emailReportCounts = {};
+        if (reports && reports.length > 0) {
+          reports.forEach(r => {
+            if (!emailReportCounts[r.email]) emailReportCounts[r.email] = 0;
+            emailReportCounts[r.email]++;
+          });
+        }
+
+        // Emails with 2+ reports (even from different buyers to same seller = resold)
+        Object.entries(emailReportCounts).forEach(([email, count]) => {
+          if (count >= 2) resoldEmails.add(email);
+        });
+
+        // Only count sellers involved in resold emails
         const sellerCounts = {};
 
         if (reports && reports.length > 0) {
           reports.forEach(r => {
+            // Only include if this report is for a resold email
+            if (!resoldEmails.has(r.email)) return;
+
             const key = `${r.supplier_username.toLowerCase()}|${r.platform}`;
             if (!sellerCounts[key]) {
               sellerCounts[key] = { username: r.supplier_username, platform: r.platform, count: 0, blacklisted: false };
@@ -497,7 +530,7 @@
           });
         }
 
-        // Merge blacklisted sellers - use their custom report_count
+        // Merge blacklisted sellers - always show (admin added)
         if (blacklisted && blacklisted.length > 0) {
           blacklisted.forEach(b => {
             const key = `${b.username.toLowerCase()}|${b.platform}`;
