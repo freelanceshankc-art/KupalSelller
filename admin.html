@@ -903,20 +903,33 @@
 
     updatePreview(selectedAnimation);
 
-    saveAnimBtn.addEventListener('click', async () => {
+    // Auto-save on selection change + manual save button
+    function saveAnimationChoice() {
       localStorage.setItem('trusted_card_animation', selectedAnimation);
 
       // Also try saving to supabase settings table (graceful fail)
       try {
-        await supabase
+        supabase
           .from('site_settings')
-          .upsert([{ key: 'trusted_card_animation', value: selectedAnimation }], { onConflict: 'key' });
+          .upsert([{ key: 'trusted_card_animation', value: selectedAnimation }], { onConflict: 'key' })
+          .then(() => {});
       } catch (e) {
         // Fallback: localStorage is enough
       }
 
       saveAnimMsg.style.display = 'inline';
-      setTimeout(() => { saveAnimMsg.style.display = 'none'; }, 2000);
+      saveAnimMsg.textContent = 'Saved! Refresh main page to see changes.';
+      setTimeout(() => { saveAnimMsg.style.display = 'none'; }, 3000);
+    }
+
+    saveAnimBtn.addEventListener('click', saveAnimationChoice);
+
+    // Also auto-save immediately when user clicks an option
+    animOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        // Small delay to let selectedAnimation update
+        setTimeout(saveAnimationChoice, 100);
+      });
     });
 
     // Load saved animation on init
