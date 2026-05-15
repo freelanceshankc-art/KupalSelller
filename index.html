@@ -267,19 +267,6 @@
             <div class="match-found">
               <h3>Match Found!</h3>
               <p>This subscription has been reported before:</p>
-              <table class="match-table">
-                <thead>
-                  <tr>
-                    <th>Email</th>
-                    <th>Type</th>
-                    <th>Supplier</th>
-                    <th>Platform</th>
-                    <th>Purchased</th>
-                    <th>Issue Date</th>
-                    <th>Reported On</th>
-                  </tr>
-                </thead>
-                <tbody>
           `;
 
           existingReports.forEach(report => {
@@ -287,21 +274,40 @@
             const purchased = report.purchase_date || 'N/A';
             const issue = report.issue_date || 'N/A';
             matchHTML += `
-              <tr>
-                <td>${escapeHTML(report.email)}</td>
-                <td>${escapeHTML(report.subscription_type || 'N/A')}</td>
-                <td>${escapeHTML(report.supplier_username)}</td>
-                <td>${escapeHTML(report.platform)}</td>
-                <td>${purchased}</td>
-                <td>${issue}</td>
-                <td>${date}</td>
-              </tr>
+              <div class="match-card">
+                <div class="match-card-row">
+                  <span class="match-label">Email</span>
+                  <span class="match-value">${escapeHTML(report.email)}</span>
+                </div>
+                <div class="match-card-row">
+                  <span class="match-label">Type</span>
+                  <span class="match-value">${escapeHTML(report.subscription_type || 'N/A')}</span>
+                </div>
+                <div class="match-card-row">
+                  <span class="match-label">Supplier</span>
+                  <span class="match-value">${escapeHTML(report.supplier_username)}</span>
+                </div>
+                <div class="match-card-row">
+                  <span class="match-label">Platform</span>
+                  <span class="match-value">${escapeHTML(report.platform)}</span>
+                </div>
+                <div class="match-card-row">
+                  <span class="match-label">Purchased</span>
+                  <span class="match-value">${purchased}</span>
+                </div>
+                <div class="match-card-row">
+                  <span class="match-label">Issue Date</span>
+                  <span class="match-value">${issue}</span>
+                </div>
+                <div class="match-card-row">
+                  <span class="match-label">Reported On</span>
+                  <span class="match-value">${date}</span>
+                </div>
+              </div>
             `;
           });
 
           matchHTML += `
-                </tbody>
-              </table>
               <p class="warning-text">This seller has been reported ${existingReports.length} time(s) before your report.</p>
             </div>
           `;
