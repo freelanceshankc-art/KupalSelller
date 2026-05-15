@@ -158,6 +158,7 @@
               <th>Sellers Involved</th>
               <th>Times Reported</th>
               <th>Details</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody id="flagged-table-body">
@@ -225,10 +226,11 @@
               <th>Seller</th>
               <th>Platform</th>
               <th>Submitted</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody id="reports-table-body">
-            <tr><td colspan="5" class="loading">Loading data</td></tr>
+            <tr><td colspan="6" class="loading">Loading data</td></tr>
           </tbody>
         </table>
       </div>
@@ -363,7 +365,7 @@
       const tbody = document.getElementById('flagged-table-body');
 
       if (flagged.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No flagged emails yet. Flags appear when the same email is reported multiple times.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No flagged emails yet. Flags appear when the same email is reported multiple times.</td></tr>';
         return;
       }
 
@@ -380,6 +382,7 @@
             <td>${sellersHTML}</td>
             <td><span class="report-count ${data.count >= 3 ? 'high' : 'medium'}">${data.count}</span></td>
             <td>${data.sellers.size > 1 ? '⚠️ Sold by ' + data.sellers.size + ' different sellers' : 'Reported ' + data.count + ' times'}</td>
+            <td><button class="remove-btn" onclick="deleteReportsByEmail('${escapeHTML(email).replace(/'/g, "\\'")}')">Delete All</button></td>
           </tr>
         `;
       }).join('');
@@ -435,7 +438,7 @@
       const tbody = document.getElementById('reports-table-body');
 
       if (reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No reports yet</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No reports yet</td></tr>';
         return;
       }
 
@@ -450,10 +453,29 @@
             <td><strong>${escapeHTML(report.supplier_username)}</strong></td>
             <td><span class="platform-badge ${platformClass}">${escapeHTML(report.platform)}</span></td>
             <td>${date}</td>
+            <td><button class="remove-btn" onclick="deleteReport('${report.id}')">Delete</button></td>
           </tr>
         `;
       }).join('');
     }
+
+    async function deleteReport(id) {
+      if (!confirm('Delete this report?')) return;
+
+      try {
+        const { error } = await supabase
+          .from('reports')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
+        loadDashboard();
+      } catch (error) {
+        alert('Error deleting report: ' + error.message);
+      }
+    }
+
+    window.deleteReport = deleteReport;
 
     function displaySearchResults(results) {
       const tbody = document.getElementById('search-table-body');
@@ -599,6 +621,28 @@
         tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Error: ${escapeHTML(error.message)}</td></tr>`;
       }
     }
+
+    // ============================================
+    // DELETE REPORTS BY EMAIL
+    // ============================================
+
+    async function deleteReportsByEmail(email) {
+      if (!confirm(`Delete ALL reports for email: ${email}?`)) return;
+
+      try {
+        const { error } = await supabase
+          .from('reports')
+          .delete()
+          .eq('email', email);
+
+        if (error) throw error;
+        loadDashboard();
+      } catch (error) {
+        alert('Error deleting reports: ' + error.message);
+      }
+    }
+
+    window.deleteReportsByEmail = deleteReportsByEmail;
 
     // ============================================
     // BLACKLISTED SELLERS CRUD

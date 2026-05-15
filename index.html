@@ -427,7 +427,7 @@
         list.innerHTML = ranked.map((seller, index) => {
           const riskClass = seller.blacklisted ? 'high-risk' : seller.count >= 5 ? 'high-risk' : seller.count >= 3 ? 'medium-risk' : 'low-risk';
           const rankNum = index + 1;
-          const badge = seller.blacklisted ? ' <span style="font-size:0.55rem;color:#ef4444;border:1px solid rgba(239,68,68,0.3);padding:1px 4px;border-radius:3px;">BLACKLISTED</span>' : '';
+          const badge = '';
           return `
             <div class="rank-item ${riskClass}">
               <span class="rank-number">${rankNum}</span>
