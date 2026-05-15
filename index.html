@@ -274,6 +274,8 @@
                     <th>Type</th>
                     <th>Supplier</th>
                     <th>Platform</th>
+                    <th>Purchased</th>
+                    <th>Issue Date</th>
                     <th>Reported On</th>
                   </tr>
                 </thead>
@@ -282,12 +284,16 @@
 
           existingReports.forEach(report => {
             const date = new Date(report.created_at).toLocaleDateString();
+            const purchased = report.purchase_date || 'N/A';
+            const issue = report.issue_date || 'N/A';
             matchHTML += `
               <tr>
                 <td>${escapeHTML(report.email)}</td>
                 <td>${escapeHTML(report.subscription_type || 'N/A')}</td>
                 <td>${escapeHTML(report.supplier_username)}</td>
                 <td>${escapeHTML(report.platform)}</td>
+                <td>${purchased}</td>
+                <td>${issue}</td>
                 <td>${date}</td>
               </tr>
             `;
