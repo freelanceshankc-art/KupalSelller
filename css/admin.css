@@ -14,6 +14,7 @@ body {
   color: #e0e0e0;
   min-height: 100vh;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 .container {
@@ -259,6 +260,10 @@ header h1 {
 
 /* Responsive */
 @media (max-width: 768px) {
+  .container {
+    padding: 24px 14px;
+  }
+
   header {
     flex-direction: column;
     text-align: center;
@@ -270,6 +275,31 @@ header h1 {
 
   .stats-row {
     grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .panel {
+    padding: 18px 14px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+
+  .panel h2 {
+    font-size: 1rem;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+  }
+
+  .panel-description {
+    font-size: 0.8rem;
   }
 
   .data-table {
@@ -280,11 +310,225 @@ header h1 {
   .data-table td {
     padding: 8px 10px;
   }
+
+  /* Add seller form stacks on mobile */
+  .add-seller-form {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .add-seller-form input,
+  .add-seller-form select {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .add-btn {
+    width: 100%;
+    padding: 12px;
+  }
+
+  /* Edit row stacks on mobile */
+  .edit-row {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .edit-row input,
+  .edit-row select {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .edit-row .add-btn,
+  .edit-row .remove-btn {
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+  }
+
+  /* Search box */
+  .search-box input {
+    font-size: 0.9rem;
+    padding: 10px 14px;
+  }
+
+  /* Buttons */
+  .refresh-btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+
+  .back-link {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+
+  /* Login box */
+  .login-box {
+    margin: 60px auto;
+    padding: 28px 20px;
+    max-width: 90%;
+  }
+
+  .login-box h2 {
+    font-size: 1.3rem;
+  }
 }
 
 @media (max-width: 480px) {
+  .container {
+    padding: 16px 10px;
+  }
+
+  header h1 {
+    font-size: 1.2rem;
+  }
+
   .stats-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 12px 8px;
+    border-radius: 8px;
+  }
+
+  .stat-card h3 {
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .panel {
+    padding: 14px 10px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+  }
+
+  .panel h2 {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+
+  .panel-description {
+    font-size: 0.75rem;
+    margin-bottom: 10px;
+  }
+
+  .data-table {
+    font-size: 0.7rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 6px 8px;
+  }
+
+  .data-table th {
+    font-size: 0.6rem;
+  }
+
+  /* Platform badge smaller */
+  .platform-badge {
+    padding: 2px 6px;
+    font-size: 0.65rem;
+  }
+
+  /* Report count smaller */
+  .report-count {
+    padding: 2px 7px;
+    font-size: 0.7rem;
+  }
+
+  /* Seller tag smaller */
+  .seller-tag {
+    padding: 2px 6px;
+    font-size: 0.65rem;
+  }
+
+  /* Flag badge smaller */
+  .flag-badge {
+    font-size: 0.55rem;
+    padding: 1px 5px;
+  }
+
+  /* Form inputs */
+  .add-seller-form input,
+  .add-seller-form select {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+
+  /* Edit/Remove buttons in table */
+  .edit-btn,
+  .remove-btn {
+    padding: 4px 8px;
+    font-size: 0.65rem;
+    margin-right: 4px;
+    margin-bottom: 3px;
+    display: inline-block;
+  }
+
+  /* Login */
+  .login-box {
+    margin: 40px auto;
+    padding: 24px 16px;
+  }
+
+  .login-box h2 {
+    font-size: 1.1rem;
+  }
+
+  .login-box p {
+    font-size: 0.8rem;
+  }
+
+  .login-box input {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .login-box .submit-btn {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .stats-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .stat-card {
+    padding: 10px 6px;
+  }
+
+  .stat-card h3 {
+    font-size: 0.6rem;
+  }
+
+  .stat-card .stat-value {
+    font-size: 1.1rem;
+  }
+
+  .panel {
+    padding: 12px 8px;
+  }
+
+  .panel h2 {
+    font-size: 0.85rem;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 5px 6px;
   }
 }
 

@@ -21,6 +21,7 @@ body {
   color: #fafafa;
   min-height: 100vh;
   line-height: 1.6;
+  overflow-x: hidden;
 }
 
 /* ============================================
@@ -145,6 +146,7 @@ body {
   max-width: 1100px;
   margin: 0 auto;
   padding: 80px 20px 50px;
+  overflow-x: hidden;
 }
 
 /* Layout */
@@ -159,6 +161,8 @@ body {
 
 .form-column {
   max-width: 540px;
+  width: 100%;
+  min-width: 0;
 }
 
 .ranking-sidebar {
@@ -671,9 +675,19 @@ footer {
 }
 
 @media (max-width: 768px) {
+  .page-wrapper {
+    padding: 70px 16px 40px;
+  }
+
   .layout-three-col {
     grid-template-columns: 1fr;
-    max-width: 540px;
+    max-width: 100%;
+    gap: 20px;
+  }
+
+  .form-column {
+    max-width: 100%;
+    width: 100%;
   }
 
   .ranking-sidebar {
@@ -686,7 +700,60 @@ footer {
   }
 
   .trusted-list {
+    display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  header {
+    margin-bottom: 24px;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+  }
+
+  .report-form {
+    padding: 24px 20px;
+  }
+
+  /* Fix match table overflow */
+  .result-section {
+    padding: 16px;
+    overflow-x: auto;
+  }
+
+  .match-table {
+    font-size: 0.7rem;
+    min-width: 400px;
+  }
+
+  .match-table th,
+  .match-table td {
+    padding: 8px 6px;
+  }
+
+  /* Ranking panel full width */
+  .ranking-panel {
+    padding: 16px;
+  }
+
+  .rank-item {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .rank-name {
+    font-size: 0.7rem;
+  }
+
+  /* Trusted panel */
+  .trusted-panel {
+    padding: 16px;
   }
 }
 
@@ -698,34 +765,193 @@ footer {
 
 @media (max-width: 480px) {
   .page-wrapper {
-    padding: 32px 16px;
+    padding: 65px 12px 30px;
+  }
+
+  .layout-three-col {
+    gap: 16px;
   }
 
   header h1 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
   }
 
   .report-form {
-    padding: 24px 18px;
+    padding: 20px 14px;
+    border-radius: 12px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    font-size: 0.75rem;
+    margin-bottom: 6px;
   }
 
   .form-group input,
   .form-group select {
     padding: 12px 14px;
-    font-size: 1rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
   }
 
   .submit-btn {
     padding: 14px;
+    font-size: 0.875rem;
+    border-radius: 8px;
   }
 
-  .match-table {
+  /* Ranking items compact */
+  .ranking-panel {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .ranking-panel h2 {
+    font-size: 0.85rem;
+  }
+
+  .rank-item {
+    padding: 8px;
+    gap: 6px;
+    border-radius: 6px;
+  }
+
+  .rank-number {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    font-size: 0.6rem;
+  }
+
+  .rank-name {
+    font-size: 0.68rem;
+  }
+
+  .rank-platform {
+    font-size: 0.55rem;
+  }
+
+  .rank-count {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+
+  /* Trusted panel compact */
+  .trusted-panel {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .trusted-panel h2 {
+    font-size: 0.85rem;
+  }
+
+  .trusted-list .seller-card {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .trusted-list .seller-card .seller-avatar,
+  .trusted-list .seller-avatar-img {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+  }
+
+  .trusted-list .seller-card .seller-name {
+    font-size: 0.7rem;
+  }
+
+  .trusted-list .seller-card .seller-platform {
+    font-size: 0.55rem;
+  }
+
+  .trusted-list .seller-card .verified-badge {
+    font-size: 0.5rem;
+    padding: 2px 5px;
+  }
+
+  /* Result section */
+  .result-section {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .match-found h3,
+  .no-match h3 {
+    font-size: 0.9rem;
+  }
+
+  .match-found p,
+  .no-match p {
+    font-size: 0.8rem;
+  }
+
+  .warning-text {
+    font-size: 0.75rem;
+    padding: 10px;
+  }
+
+  .report-summary {
+    padding: 12px;
+  }
+
+  .report-summary p {
     font-size: 0.75rem;
   }
 
-  .match-table th,
-  .match-table td {
-    padding: 8px 6px;
+  /* Footer */
+  footer {
+    margin-top: 30px;
+    padding-top: 16px;
+  }
+
+  .footer-text {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .page-wrapper {
+    padding: 60px 10px 24px;
+  }
+
+  .navbar {
+    padding: 12px 16px;
+  }
+
+  .nav-brand {
+    font-size: 0.9rem;
+  }
+
+  header h1 {
+    font-size: 1.15rem;
+  }
+
+  .report-form {
+    padding: 16px 12px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 11px 12px;
+    font-size: 0.85rem;
+  }
+
+  .ranking-panel,
+  .trusted-panel {
+    padding: 12px;
+  }
+
+  .rank-item {
+    padding: 7px;
   }
 }
 
