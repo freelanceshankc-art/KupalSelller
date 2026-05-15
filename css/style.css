@@ -1363,7 +1363,7 @@ footer {
 
 @media (max-width: 768px) {
   .telegram-float-btn {
-    bottom: 90px;
+    bottom: 100px;
     left: auto;
     right: 16px;
     width: 46px;
