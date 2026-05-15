@@ -385,7 +385,7 @@
         // Fetch manually blacklisted sellers
         const { data: blacklisted, error: blError } = await supabase
           .from('blacklisted_sellers')
-          .select('username, platform, reason');
+          .select('username, platform, report_count');
 
         if (blError) throw blError;
 
@@ -396,22 +396,21 @@
           reports.forEach(r => {
             const key = `${r.supplier_username.toLowerCase()}|${r.platform}`;
             if (!sellerCounts[key]) {
-              sellerCounts[key] = { username: r.supplier_username, platform: r.platform, count: 0, blacklisted: false, reason: '' };
+              sellerCounts[key] = { username: r.supplier_username, platform: r.platform, count: 0, blacklisted: false };
             }
             sellerCounts[key].count++;
           });
         }
 
-        // Merge blacklisted sellers - they get a guaranteed boost (count as 10 reports each)
+        // Merge blacklisted sellers - use their custom report_count
         if (blacklisted && blacklisted.length > 0) {
           blacklisted.forEach(b => {
             const key = `${b.username.toLowerCase()}|${b.platform}`;
             if (!sellerCounts[key]) {
-              sellerCounts[key] = { username: b.username, platform: b.platform, count: 0, blacklisted: true, reason: b.reason };
+              sellerCounts[key] = { username: b.username, platform: b.platform, count: 0, blacklisted: true };
             }
-            sellerCounts[key].count += 10;
+            sellerCounts[key].count += (b.report_count || 10);
             sellerCounts[key].blacklisted = true;
-            sellerCounts[key].reason = b.reason;
           });
         }
 
@@ -429,9 +428,8 @@
           const riskClass = seller.blacklisted ? 'high-risk' : seller.count >= 5 ? 'high-risk' : seller.count >= 3 ? 'medium-risk' : 'low-risk';
           const rankNum = index + 1;
           const badge = seller.blacklisted ? ' <span style="font-size:0.55rem;color:#ef4444;border:1px solid rgba(239,68,68,0.3);padding:1px 4px;border-radius:3px;">BLACKLISTED</span>' : '';
-          const tooltip = seller.reason ? ` title="${escapeHTML(seller.reason)}"` : '';
           return `
-            <div class="rank-item ${riskClass}"${tooltip}>
+            <div class="rank-item ${riskClass}">
               <span class="rank-number">${rankNum}</span>
               <div class="rank-info">
                 <div class="rank-name">${escapeHTML(seller.username)}${badge}</div>

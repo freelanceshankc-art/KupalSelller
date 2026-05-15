@@ -93,7 +93,7 @@
     <!-- Blacklisted Sellers (Manual Kupal List) -->
     <div class="panel blacklist-panel">
       <h2>🚫 Manage Blacklisted Sellers (Kupal List)</h2>
-      <p class="panel-description">Manually add, edit, or remove sellers from the blacklist. These merge into the Top 10 Kupal ranking on the main page.</p>
+      <p class="panel-description">Manually add sellers to the blacklist. Set their report count to control their ranking position.</p>
       
       <div class="add-seller-form" id="blacklist-form">
         <input type="text" id="bl-username" placeholder="Seller username" />
@@ -106,7 +106,7 @@
           <option value="Instagram">Instagram</option>
           <option value="Others">Others</option>
         </select>
-        <input type="text" id="bl-reason" placeholder="Reason (e.g. scammer, fake accounts)" style="flex:2;" />
+        <input type="number" id="bl-count" placeholder="Report count (e.g. 10)" min="1" value="10" style="width:140px;" />
         <button id="add-blacklist-btn" class="add-btn blacklist-add-btn">Add to Blacklist</button>
       </div>
 
@@ -123,7 +123,7 @@
           <option value="Instagram">Instagram</option>
           <option value="Others">Others</option>
         </select>
-        <input type="text" id="bl-edit-reason" placeholder="Reason" style="flex:2;" />
+        <input type="number" id="bl-edit-count" placeholder="Report count" min="1" style="width:140px;" />
         <button id="bl-save-edit-btn" class="add-btn">Save</button>
         <button id="bl-cancel-edit-btn" class="remove-btn">Cancel</button>
       </div>
@@ -134,7 +134,7 @@
             <tr>
               <th>Username</th>
               <th>Platform</th>
-              <th>Reason</th>
+              <th>Reports</th>
               <th>Added</th>
               <th>Actions</th>
             </tr>
@@ -616,27 +616,23 @@
     async function addBlacklistedSeller() {
       const username = document.getElementById('bl-username').value.trim();
       const platform = document.getElementById('bl-platform').value;
-      const reason = document.getElementById('bl-reason').value.trim();
+      const reportCount = parseInt(document.getElementById('bl-count').value) || 10;
 
       if (!username) {
         alert('Please enter a username');
-        return;
-      }
-      if (!reason) {
-        alert('Please enter a reason');
         return;
       }
 
       try {
         const { data, error } = await supabase
           .from('blacklisted_sellers')
-          .insert([{ username, platform, reason }])
+          .insert([{ username, platform, report_count: reportCount }])
           .select();
 
         if (error) throw error;
 
         document.getElementById('bl-username').value = '';
-        document.getElementById('bl-reason').value = '';
+        document.getElementById('bl-count').value = '10';
         loadBlacklistedSellers();
       } catch (error) {
         alert('Error adding to blacklist: ' + error.message);
@@ -659,11 +655,11 @@
       }
     }
 
-    function startEditBlacklist(id, username, platform, reason) {
+    function startEditBlacklist(id, username, platform, reportCount) {
       editingBlacklistId = id;
       document.getElementById('bl-edit-username').value = username;
       document.getElementById('bl-edit-platform').value = platform;
-      document.getElementById('bl-edit-reason').value = reason;
+      document.getElementById('bl-edit-count').value = reportCount;
       document.getElementById('bl-edit-row').style.display = 'flex';
       document.getElementById('blacklist-form').style.display = 'none';
     }
@@ -679,17 +675,17 @@
 
       const username = document.getElementById('bl-edit-username').value.trim();
       const platform = document.getElementById('bl-edit-platform').value;
-      const reason = document.getElementById('bl-edit-reason').value.trim();
+      const reportCount = parseInt(document.getElementById('bl-edit-count').value) || 10;
 
-      if (!username || !reason) {
-        alert('Username and reason are required');
+      if (!username) {
+        alert('Username is required');
         return;
       }
 
       try {
         const { error } = await supabase
           .from('blacklisted_sellers')
-          .update({ username, platform, reason })
+          .update({ username, platform, report_count: reportCount })
           .eq('id', editingBlacklistId);
 
         if (error) throw error;
@@ -725,15 +721,15 @@
           const platformClass = getPlatformClass(seller.platform);
           const date = new Date(seller.added_at).toLocaleDateString();
           const escapedUsername = escapeHTML(seller.username).replace(/'/g, "\\'");
-          const escapedReason = escapeHTML(seller.reason).replace(/'/g, "\\'");
+          const count = seller.report_count || 10;
           return `
             <tr>
               <td><strong>${escapeHTML(seller.username)}</strong></td>
               <td><span class="platform-badge ${platformClass}">${escapeHTML(seller.platform)}</span></td>
-              <td>${escapeHTML(seller.reason)}</td>
+              <td><span class="report-count high">${count}</span></td>
               <td>${date}</td>
               <td>
-                <button class="edit-btn" onclick="startEditBlacklist('${seller.id}', '${escapedUsername}', '${seller.platform}', '${escapedReason}')">Edit</button>
+                <button class="edit-btn" onclick="startEditBlacklist('${seller.id}', '${escapedUsername}', '${seller.platform}', ${count})">Edit</button>
                 <button class="remove-btn" onclick="removeBlacklistedSeller('${seller.id}')">Delete</button>
               </td>
             </tr>
