@@ -5,6 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Report Problematic Subscription Seller</title>
   <link rel="stylesheet" href="css/style.css">
+  <script>
+    // Pre-inject card animation CSS immediately from localStorage (no waiting for Supabase)
+    (function() {
+      var animStyle = localStorage.getItem('trusted_card_animation');
+      if (!animStyle || animStyle === 'none') return;
+      var css = '';
+      switch (animStyle) {
+        case 'glow-pulse':
+          css = '.trusted-list .seller-card{animation:tcGlowPulse 2.5s ease-in-out infinite}@keyframes tcGlowPulse{0%,100%{box-shadow:0 0 4px rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.1)}50%{box-shadow:0 0 18px rgba(74,222,128,0.4),0 0 36px rgba(74,222,128,0.15);border-color:rgba(74,222,128,0.4)}}';
+          break;
+        case 'shine-sweep':
+          css = '.trusted-list .seller-card{position:relative;overflow:hidden}.trusted-list .seller-card::after{content:"";position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);animation:tcShineSweep 3s ease-in-out infinite}@keyframes tcShineSweep{0%{left:-100%}100%{left:200%}}';
+          break;
+        case 'border-gradient':
+          css = '.trusted-list .seller-card{border:2px solid transparent!important;background-image:linear-gradient(rgba(24,24,32,0.6),rgba(24,24,32,0.6)),linear-gradient(135deg,#4ade80,#06b6d4,#818cf8,#c084fc,#4ade80)!important;background-origin:border-box!important;background-clip:padding-box,border-box!important;animation:tcBorderRotate 4s linear infinite}@keyframes tcBorderRotate{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}';
+          break;
+        case 'float-bounce':
+          css = '.trusted-list .seller-card{animation:tcFloat 3s ease-in-out infinite}.trusted-list .seller-card:nth-child(odd){animation-delay:0.3s}.trusted-list .seller-card:nth-child(3n){animation-delay:0.6s}@keyframes tcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}';
+          break;
+        case 'scale-hover':
+          css = '.trusted-list .seller-card{transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s ease!important}.trusted-list .seller-card:hover{transform:scale(1.05) translateX(0)!important;box-shadow:0 10px 30px rgba(74,222,128,0.2)!important;border-color:rgba(74,222,128,0.4)!important}';
+          break;
+      }
+      if (css) {
+        var s = document.createElement('style');
+        s.id = 'trusted-card-anim-style';
+        s.textContent = css;
+        document.head.appendChild(s);
+      }
+    })();
+  </script>
 </head>
 <body>
   <!-- Navigation Bar -->
@@ -836,32 +867,30 @@
     })();
 
     loadReportedSellers();
-    loadTrustedSellers().then(() => applyCardAnimation());
+    loadTrustedSellers().then(() => {
+      // Apply animation after cards are in DOM
+      const animStyle = localStorage.getItem('trusted_card_animation') || 'none';
+      injectCardAnimationCSS(animStyle);
+    });
 
-    // ============================================
-    // LOAD & APPLY TRUSTED CARD ANIMATION STYLE
-    // ============================================
-    async function applyCardAnimation() {
-      let animStyle = localStorage.getItem('trusted_card_animation') || 'none';
-
-      // Try loading from supabase (graceful fail)
+    // Also try to fetch from Supabase and update (for cross-device sync)
+    (async function syncAnimationSetting() {
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('site_settings')
           .select('value')
           .eq('key', 'trusted_card_animation')
           .single();
 
-        if (data && data.value) {
-          animStyle = data.value;
-          localStorage.setItem('trusted_card_animation', animStyle);
+        if (!error && data && data.value) {
+          localStorage.setItem('trusted_card_animation', data.value);
+          // Re-apply in case it changed
+          injectCardAnimationCSS(data.value);
         }
       } catch (e) {
-        // Use localStorage value
+        // Table doesn't exist or other error — localStorage is fine
       }
-
-      injectCardAnimationCSS(animStyle);
-    }
+    })();
 
     function injectCardAnimationCSS(animStyle) {
       // Remove any existing animation style
