@@ -64,16 +64,7 @@
           >
         </div>
 
-        <div class="form-group">
-          <label for="password">Subscription Password</label>
-          <input 
-            type="text" 
-            id="password" 
-            name="password" 
-            placeholder="Enter subscription password"
-            required
-          >
-        </div>
+
 
         <div class="form-group">
           <label>Subscription Type</label>
@@ -241,14 +232,13 @@
       e.preventDefault();
 
       const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
       const subscriptionType = document.getElementById('subscription-type').value;
       const purchaseDate = document.getElementById('purchase-date').value;
       const issueDate = document.getElementById('issue-date').value;
       const supplierUsername = document.getElementById('supplier-username').value.trim();
       const platform = document.getElementById('platform').value;
 
-      if (!email || !password || !subscriptionType || !purchaseDate || !issueDate || !supplierUsername || !platform) {
+      if (!email || !subscriptionType || !purchaseDate || !issueDate || !supplierUsername || !platform) {
         showResult('error', 'Please fill in all fields.');
         return;
       }
@@ -307,7 +297,6 @@
           .insert([
             {
               email: email,
-              password: password,
               subscription_type: subscriptionType,
               purchase_date: purchaseDate,
               issue_date: issueDate,
